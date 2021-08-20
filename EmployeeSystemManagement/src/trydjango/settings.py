@@ -44,8 +44,6 @@ INSTALLED_APPS = [
 
     #own
     'pages',
-    'django_echarts',
-    'django_filters',
     'training',
     'organizeuser',
 ]
@@ -90,7 +88,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'djangomysql',
         'USER':'root',
-        'PASSWORD':'sixosoft',
+        'PASSWORD':'xxyxxy',
         'PORT':3306,
         'HOST':'127.0.0.1',
         'POOL': {

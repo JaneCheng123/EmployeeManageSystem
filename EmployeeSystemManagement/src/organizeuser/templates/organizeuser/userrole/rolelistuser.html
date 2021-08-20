@@ -28,20 +28,20 @@ function submitForm() {
     return false;
 }
 
-function getDept() {
-  var iframe = document.getElementById("modalcontent");
-  var checkbox = iframe.contentWindow.document.getElementsByClassName("selected");
-  Array.prototype.forEach.call(checkbox,function(el) {
-      if(el.checked == true) {
-         console.log("checked");
-         console.log(el.value);
-      }
-  });
-
-}
 
 function updateUser(user) {
+  console.log("back to call back");
   console.log(user);
+  var href = "/ou/userrole.do?$ACTION=updaterolelistuser&rolecode=" + '{{rolecode}}' + "&users=" + user;
+  console.log(href);
+  location.href= href;
+}
+
+function closeModal() {
+    var div = document.getElementById("modal-dialog");
+    div.remove();
+    var div = document.getElementById("staticBackdrop");
+    div.remove();   
 }
 
 
@@ -58,7 +58,7 @@ function updateUser(user) {
 Go back
 </button>
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-onclick="selectUser('checkbox','updateUser');">
+onclick="selectUser('checkbox','updateUser',{{usernames}},'{{rolecode}}');">
   Launch User modal
 </button>
 

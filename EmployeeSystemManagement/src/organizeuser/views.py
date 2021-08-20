@@ -3,6 +3,7 @@ import os
 from django.shortcuts import render, redirect, HttpResponse
 from importlib import import_module
 from training.db import *
+from time import gmtime, strftime, localtime
 
 # Create your views here.
 def ou_page(request):
@@ -159,63 +160,73 @@ def dept_view(request):
 
 # #########################################################################  set up ##############################################################
 def setup(request):
+	check = "Select * from ou_role"
+	checkset = fetch_one(check,())
+	print(checkset)
+	if checkset != None:
+		print("already set up")
+		context = {"whetherSuccess" : "done"}
+		HTML = "organizeuser/setup.html"
+		return render(request,HTML,context)
 	try:
 		sql = "Insert Into ou_account (id,usercode,username,passwd,email,userstatus,deptcode,registeredtime) values (%s,%s,%s,%s,%s,%s,%s,%s)"
-		ids = [1,2,3]
-		usercode = ["Chris1","Amy2","Zhen3"]
-		username = ["Chris","Amy","Zhen"]
-		passwd = "4f45fae75f04d065545287c7620bf837"
-		email = ["chris@qq.com","Amy@qq.com","Zhen@qq.com"]
+		usercode = "admin"
+		username = "Administrator"
+		passwd = "21232f297a57a5a743894a0e4a801fc3"
+		email = "admin@qq.com"
 		userstatus = "A"
 		deptcode = "Backend"
-		registeredtime = "2021-01-01 18:00:00"
-		for i in range(3):
-			insert(sql,(str(ids[i]),usercode[i],username[i],passwd,email[i],userstatus,deptcode,registeredtime))
+		registertime = strftime("%Y-%m-%d %H:%M:%S",localtime())
+		print(registertime)
+		insert(sql,(str(1),usercode,username,passwd,email,userstatus,deptcode,registertime))
 
 		sql2 = "Insert Into ou_role (id,rolecode,rolename) values (%s,%s,%s)"
-		insert(sql2,(str(1),"administrator","admin"))
+		insert(sql2,(str(1),"administrator","adm"))
 		insert(sql2,(str(2),"normaluser","user"))
+		insert(sql2,(str(3),"anonymous","anonymous"))
 
 		sql3 = "Insert Into ou_dept (id,deptcode,pathcode,deptname,deptstatus) values (%s,%s,%s,%s,%s)"
 		ids = [1,2,3,4,5]
 		deptcode = ["Backend","BackendOne","Frontend","FrontendOne","Testing"]
-		pathcode = ["default/Backend","default/BackendBackendOne","default/Frontend","default/FrontendFrontendOne","default/Testing"]
+		pathcode = ["default/Backend","default/Backend/BackendOne","default/Frontend","default/Frontend/FrontendOne","default/Testing"]
 		deptname = ["Backend","Backend One","Frontend","Frontend One","Testing"]
 		deptstatus = "A"
 		for j in range(5):
-			insert(sql3,(str(ids[i]),deptcode[i],pathcode[i],deptname[i],deptstatus))
+			insert(sql3,(str(ids[j]),deptcode[j],pathcode[j],deptname[j],deptstatus))
 
 		sql4 = "Insert Into ou_userrole (id,usercode,rolecode) values (%s,%s,%s)"
-		insert(sql4,(str(1),"Chris1","administrator"))
-		insert(sql4,(str(2),"Amy2","normaluser"))
-		insert(sql4,(str(3),"Zhen3","normaluser"))
+		insert(sql4,(str(1),"admin","administrator"))
+	
 
 		sql5 = "Insert Into ou_resource (id,resourcecode,resourcename,sysname,modelname,actionname,accesstype) values (%s,%s,%s,%s,%s,%s,%s)"
-		insert(sql5,(str(1),"training/home/oubutton","training/home/oubutton","training","home","oubutton","R"))
-		insert(sql5,(str(2),"training/home/sqlbutton","training/home/sqlbutton","training","home","sqlbutton","A"))
-		insert(sql5,(str(3),"training/home/statbutton","training/home/statbutton","training","home","statbutton","A"))
-		insert(sql5,(str(4),"training/sql/create","training/sql/create","training","sql","create","R"))
-		insert(sql5,(str(5),"training/sql/import","training/sql/import","training","sql","import","R"))
-		insert(sql5,(str(6),"training/sql/detail","training/sql/detail","training","sql","detail","R"))
-		insert(sql5,(str(7),"training/sql/delete","training/sql/delete","training","sql","delete","R"))
-		insert(sql5,(str(8),"training/sql/update","training/sql/update","training","sql","update","R"))
+		insert(sql5,(str(1),"training/home/sqlbutton","training/home/sqlbutton","training","home","sqlbutton","A"))
+		insert(sql5,(str(2),"training/home/statbutton","training/home/statbutton","training","home","statbutton","A"))
+		insert(sql5,(str(3),"training/sql/create","training/sql/create","training","sql","create","R"))
+		insert(sql5,(str(4),"training/sql/import","training/sql/import","training","sql","import","R"))
+		insert(sql5,(str(5),"training/sql/detail","training/sql/detail","training","sql","detail","R"))
+		insert(sql5,(str(6),"training/sql/delete","training/sql/delete","training","sql","delete","R"))
+		insert(sql5,(str(7),"training/sql/update","training/sql/update","training","sql","update","R"))
 
 		sql6 = "Insert Into ou_roleresource (id,rolecode,resourcecode,rightflag) values (%s,%s,%s,%s)"
-		insert(sql6,(str(1),"administrator","training/home/oubutton","Y"))
-		insert(sql6,(str(2),"normaluser","training/home/oubutton","N"))
-		insert(sql6,(str(3),"administrator","training/sql/create","Y"))
-		insert(sql6,(str(4),"normaluser","training/sql/create","N"))
-		insert(sql6,(str(5),"administrator","training/sql/import","Y"))
-		insert(sql6,(str(6),"normaluser","training/sql/import","N"))
+		insert(sql6,(str(1),"administrator","training/sql/create","Y"))
+		insert(sql6,(str(2),"normaluser","training/sql/create","N"))
+		insert(sql6,(str(3),"anonymous","training/sql/create","N"))
+		insert(sql6,(str(4),"administrator","training/sql/import","Y"))
+		insert(sql6,(str(5),"normaluser","training/sql/import","N"))
+		insert(sql6,(str(6),"anonymous","training/sql/import","N"))
 		insert(sql6,(str(7),"administrator","training/sql/detail","Y"))
 		insert(sql6,(str(8),"normaluser","training/sql/detail","Y"))
-		insert(sql6,(str(9),"administrator","training/sql/delete","Y"))
-		insert(sql6,(str(10),"normaluser","training/sql/delete","N"))
-		insert(sql6,(str(11),"administrator","training/sql/update","Y"))
-		insert(sql6,(str(12),"normaluser","training/sql/update","N"))
+		insert(sql6,(str(9),"anonymous","training/sql/detail","Y"))
+		insert(sql6,(str(10),"administrator","training/sql/delete","Y"))
+		insert(sql6,(str(11),"normaluser","training/sql/delete","N"))
+		insert(sql6,(str(12),"anonymous","training/sql/delete","N"))
+		insert(sql6,(str(13),"administrator","training/sql/update","Y"))
+		insert(sql6,(str(14),"normaluser","training/sql/update","N"))
+		insert(sql6,(str(15),"anonymous","training/sql/update","N"))
 		context = {"whetherSuccess" : True}
 
 	except Exception as e:
+		print(e)
 		context = {"whetherSuccess" : False}
 	finally:
 		HTML = "organizeuser/setup.html"

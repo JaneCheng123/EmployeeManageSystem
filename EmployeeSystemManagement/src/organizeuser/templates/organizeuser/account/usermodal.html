@@ -10,45 +10,45 @@
 
 
 <script type="text/javascript">
-function loadPage() {
+// function loadPage() {
 
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET',"ou/account.do?$ACTION=getResource");
-  xhr.responseType = 'json';
-  xhr.onload = function(e) {
-      console.log('response', this.response);
-      var jsonMenu = {{users|safe}};
+//   var xhr = new XMLHttpRequest();
+//   xhr.open('GET',"ou/account.do?$ACTION=getResource");
+//   xhr.responseType = 'json';
+//   xhr.onload = function(e) {
+//       console.log('response', this.response);
+//       var jsonMenu = {{users|safe}};
 
-      var tag = document.getElementById("allList");
-      var id = 1;
-      for(var i = 0; i < jsonMenu.length; i++) {
-          var li = document.createElement("LI");
-          tag.appendChild(li);
+//       var tag = document.getElementById("allList");
+//       var id = 1;
+//       for(var i = 0; i < jsonMenu.length; i++) {
+//           var li = document.createElement("LI");
+//           tag.appendChild(li);
 
 
-          var a = document.createElement("A");
-          // a.setAttribute("href","#");
-          // if(jsonMenu[i].sub.length != 0) {
-          //     a.setAttribute("class" ,"dropdown-toggle");
-          // }
+//           var a = document.createElement("A");
+//           // a.setAttribute("href","#");
+//           // if(jsonMenu[i].sub.length != 0) {
+//           //     a.setAttribute("class" ,"dropdown-toggle");
+//           // }
 
-          a.innerText = jsonMenu[i];
-          var check = document.createElement("input");
-          check.type = "checkbox";
-          check.className = "selected";
-          // check.id = "selectedDept"+id.toString();
-          // check.name = "selectedDept"+id.toString();
-          // check.setAttribute("onclick","selectOne("+ id +")");
-          // id = id + 1;
-          check.value = jsonMenu[i];
-          console.log(check.value);
-          li.appendChild(check);
-          li.appendChild(a);
-      }
-  }
-  xhr.send();
+//           a.innerText = jsonMenu[i];
+//           var check = document.createElement("input");
+//           check.type = "checkbox";
+//           check.className = "selected";
+//           // check.id = "selectedDept"+id.toString();
+//           // check.name = "selectedDept"+id.toString();
+//           // check.setAttribute("onclick","selectOne("+ id +")");
+//           // id = id + 1;
+//           check.value = jsonMenu[i];
+//           console.log(check.value);
+//           li.appendChild(check);
+//           li.appendChild(a);
+//       }
+//   }
+//   xhr.send();
 
-}
+// }
 
 function dropDown(event) {
   var tag = event.target;

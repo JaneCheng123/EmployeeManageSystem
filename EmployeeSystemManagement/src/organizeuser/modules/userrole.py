@@ -1,8 +1,11 @@
+import json
+
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from training.db import *
-from django.core.paginator import Paginator
+
 from .role import Role
-import json
+
 
 class Userrole:
 	def __init__(self, info):
@@ -44,7 +47,6 @@ class Userrole:
 	def rolelist(self):
 		query = 'SELECT * FROM ou_role'
 		queryset = fetch_all(query,())
-		print(queryset)
 		paginator = Paginator(queryset,10)
 		page_obj = paginator.get_page(1)
 		HTML = "organizeuser/userrole/rolelist.html"
@@ -55,19 +57,43 @@ class Userrole:
 		query = 'SELECT * FROM ou_userrole where rolecode=%s'
 		queryset = fetch_all(query,(rolecode))
 		users = []
+		usernames = []
 		for each in queryset:
 			usercode = each["usercode"]
 			print(usercode)
 			query2 = 'SELECT * FROM ou_account where usercode=%s'
 			queryset2 = fetch_one(query2,(usercode))
 			print(queryset2)
-			# username = queryset2["username"]
-			# print(usercode + "  " + username)
-			# users.append([usercode,username])
 			users.append(queryset2)
-		print(users)
+			usernames.append(queryset2["username"])
 		HTML = "organizeuser/userrole/rolelistuser.html"
-		return HTML,{'users':users}
+		return HTML,{'users':users,"rolecode":rolecode,"usernames":usernames}
+
+	def updaterolelistuser(self):
+		rolecode = self.info["rolecode"]
+		users = self.info["users"]
+		query = 'Delete FROM ou_userrole where rolecode=%s'
+		delete(query,(rolecode))
+		selectusers = users.split(",")
+		for each in selectusers:
+			query3 = 'SELECT * from ou_account where username = %s'
+			queryset3 = fetch_one(query3,(each))
+			usercode = queryset3["usercode"]
+			query = 'Delete FROM ou_userrole where usercode=%s'
+			delete(query,(usercode))
+			query2 = 'Insert into ou_userrole (id,usercode,rolecode) values (%s,%s,%s)'
+			insertid = findNextId('djangomysql.ou_userrole')
+			insert(query2,(insertid,usercode,rolecode))	
+		query = 'SELECT * FROM ou_userrole where rolecode=%s'
+		queryset = fetch_all(query,(rolecode))
+		users = []
+		for each in queryset:
+			usercode = each["usercode"]
+			query2 = 'SELECT * FROM ou_account where usercode=%s'
+			queryset2 = fetch_one(query2,(usercode))
+			users.append(queryset2)
+		HTML = "organizeuser/userrole/rolelistuser.html"
+		return HTML,{'users':users,"rolecode":rolecode}
 
 
 

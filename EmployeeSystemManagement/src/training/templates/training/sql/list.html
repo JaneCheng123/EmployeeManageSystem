@@ -15,6 +15,7 @@ function loadPage() {
   xhr2.responseType = 'json';
   xhr2.onload = function(e) {
       var jsonMenu = this.response;
+      console.log(jsonMenu)
       if(jsonMenu["training/sql/create"] == "N") {
         var element = document.getElementById("training/sql/create");
         element.setAttribute("disabled", true);

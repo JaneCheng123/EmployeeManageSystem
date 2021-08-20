@@ -19,16 +19,20 @@
 <nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
   <span class="navbar-brand mb-0 h1"> >>> Training >>> Set Up </span>
 </nav>
+<div class = "text-center">
 {% if whetherSuccess == True %}
     <p> Set up successfully! </p>
+    {% elif whetherSuccess == 'done' %}
+    <p> Already Set Up! </p>
     {% else %}
     <p> Failed to set up! </p>
 
 {% endif %}
 
-<button  style="margin-left: 14px;" class="btn-success" onclick="home()">
+<button  style="margin-left: 14px;" class="btn-success" onclick="location.href = '/'">
           Go Back
 </button>
+</div>
 
   </body>
 </html>

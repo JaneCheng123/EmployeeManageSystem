@@ -58,7 +58,7 @@ function dialogDept() {
         iframe.setAttribute("src","account.do?$ACTION=deptmodal");
         iframe.setAttribute("scrolling","yes");
         iframe.setAttribute("width","350px");
-        iframe.setAttribute("height","500px");
+        iframe.setAttribute("height","400px");
         iframe.setAttribute("id","modalcontent");
         iframe.setAttribute("name","modalcontent");
         div5.appendChild(iframe);

@@ -2,21 +2,20 @@
 
 function dialogUser() {
     var box;
-    // var deptcode;
-    // var deptname;
     var callback;
+    var userwithrole;
+    var rolecode;
 
     var self = this;
 
-    this.init = function (box,callback) {
+    this.init = function (box,callback,userwithrole,rolecode) {
         self.box = box;
-        // self.deptcode = deptcode;
-        // self.deptname = deptname;
         self.callback = callback;
+        self.userwithrole = userwithrole;
+        self.rolecode = rolecode;
     }
 
     this.showDialog = function () {
-        console.log(this.deptname);
         var div = document.createElement('div');
         div.setAttribute("class","modal fade modal-dialog-scrollable show");
         div.setAttribute("id","staticBackdrop");
@@ -29,7 +28,7 @@ function dialogUser() {
         
         var div1 = document.createElement('div');
         div1.setAttribute("id","modal-dialog");
-        div1.setAttribute("class","modal-dialog");
+        div1.setAttribute("class","modal-dialog ");
         div.appendChild(div1);
 
         var div2 = document.createElement('div');
@@ -57,10 +56,10 @@ function dialogUser() {
         var div5 = document.createElement('div');
         div5.setAttribute("class","box");
         var iframe = document.createElement('iframe');
-        iframe.setAttribute("src","account.do?$ACTION=usermodal");
+        iframe.setAttribute("src","account.do?$ACTION=usermodal&rolecode="+self.rolecode);
         iframe.setAttribute("scrolling","yes");
-        iframe.setAttribute("width","350px");
-        iframe.setAttribute("height","500px");
+        iframe.setAttribute("width","468px");
+        iframe.setAttribute("height","400px");
         iframe.setAttribute("id","modalcontent");
         iframe.setAttribute("name","modalcontent");
         div5.appendChild(iframe);
@@ -81,7 +80,7 @@ function dialogUser() {
         btn3.setAttribute("type","button");
         btn3.setAttribute("data-bs-dismiss","modal");
         btn3.innerText = "Done";
-        // btn3.setAttribute("onclick","dlg.getDept("+this.deptname+")"); 
+        btn3.setAttribute("onclick","dlg.getUser()"); 
         btn3.onclick = self.getUser;
         div6.appendChild(btn3);
         div2.appendChild(div6);
@@ -90,43 +89,57 @@ function dialogUser() {
 
 
     this.getUser = function () {
+        var first = 0;
         var user = "";
         var iframe = document.getElementById("modalcontent");
         var checkbox = iframe.contentWindow.document.getElementsByClassName("selected");
         Array.prototype.forEach.call(checkbox,function(el) {
             if(el.checked == true) {
-                 user = user + el.value;
+                 if(first == 1) {
+                    user = user + "," + el.value;
+                 }
+                 else {
+                    user = user + el.value;
+                    first = 1;
+                 }
             }
         });
-        if (self.callback)
-            eval(self.callback + "("+user+")");
-
+        if (self.callback) {
+            console.log("in callback");
+            console.log(user);
+            var par = user;
+            eval(self.callback + "("+"\'" +par+ "\'"+")");
+        }
     }
+
+    this.loadPage = function (tree,userwithrole) {
+        var tag = document.getElementById("allList");
+        var uls = formTree(tree,"default",0,userwithrole);
+        tag.appendChild(uls);
+    }
+
+
 }
 
 
-function selectUser(box,cb) {
+function selectUser(box,cb,userwithrole,rolecode) {
+    console.log("superfirst ");
+    console.log(rolecode);
     var dlg = new dialogUser();
-    dlg.init(box,cb);
+
+    dlg.init(box,cb,userwithrole,rolecode);
+    console.log("initialize");
+    console.log(dlg.rolecode);
     dlg.showDialog();
 }
 
 
-function loadPage(tree) {
+function loadPage(tree,users) {
+      console.log("loadpage");
+      console.log(users);
       var tag = document.getElementById("allList");
-      var uls = formTree(tree,"default",0);
+      var uls = formTree(tree,"default",0,users);
       tag.appendChild(uls);
-      var checkbox = document.getElementsByClassName("selected");
-      var id = 1;
-      Array.prototype.forEach.call(checkbox,function(el) {
-          el.id = "selectedDept"+id.toString();
-          el.name = "selectedDept"+id.toString();
-          el.setAttribute("onclick","selectOne("+ id +")");
-          id = id + 1;
-      });
-
-
-      console.log(uls);
 }
 function findChildren(tree,node) {
     var list = []
@@ -144,14 +157,15 @@ function findUser(tree,deptname) {
     var users = null;
     Array.prototype.forEach.call(tree,function(each) {
         if(each["name"] == deptname) {
-            console.log(each["user"]);
             users = each["user"];
         } 
     });
     return users;
 }
 
-function formTree(tree,node,first) {
+function formTree(tree,node,first,userwithrole) {
+    console.log("in form tree");
+    console.log(userwithrole);
     var ul = document.createElement("ul");
     if(first != 0) {
       ul.style.display = "none";
@@ -171,7 +185,7 @@ function formTree(tree,node,first) {
         if (findChildren(tree,children[i][0]).length > 0) {
             a.setAttribute("class" ,"dropdown-toggle");
             a.ondblclick = dropDown;
-            grandson = formTree(tree,children[i][0],1);
+            grandson = formTree(tree,children[i][0],1,userwithrole);
             ul.appendChild(grandson);
         }
     }
@@ -184,11 +198,12 @@ function formTree(tree,node,first) {
             a.setAttribute("href","#");
             a.innerText = users[i];
             
-
             var check = document.createElement("input");
             check.type = "checkbox";
             check.className = "selected";
-
+            if(userwithrole.indexOf(users[i]) != -1) {
+                check.checked = true;
+            }
             check.value = users[i];
             li.appendChild(check);
             li.appendChild(a);
@@ -213,7 +228,12 @@ function dropDown(event) {
   console.log(deptcode);
 }
 
-
+function closeModal() {
+    var div = document.getElementById("modal-dialog");
+    div.remove();
+    var div = document.getElementById("staticBackdrop");
+    div.remove();   
+}
 
 function getCode(event) {
   var tag = event.target;

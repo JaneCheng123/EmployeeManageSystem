@@ -166,10 +166,13 @@ class Sql:
 	    return self.request,HTML,context 
 
 	def get_home_resource(self):
-		usercode = self.request.session['user'][0]
-		sql = "Select * from ou_userrole where usercode = %s"
-		target = fetch_one(sql,(usercode))
-		rolecode = target["rolecode"]
+		if self.request.session['user'][0] == "anonymous":
+			rolecode = "anonymous"
+		else:
+			usercode = self.request.session['user'][0]
+			sql = "Select * from ou_userrole where usercode = %s"
+			target = fetch_one(sql,(usercode))
+			rolecode = target["rolecode"]
 		result1 = resource_access(rolecode,"training/home/sqlbutton")
 		result2 = resource_access(rolecode,"training/home/statbutton")
 		result3 = resource_access(rolecode,"training/home/oubutton")
@@ -178,13 +181,16 @@ class Sql:
 		return self.request,HTML,JsonResponse(json_resource,safe=False)
 
 	def get_list_resource(self):
-		usercode = self.request.session['user'][0]
-		sql = "Select * from ou_userrole where usercode = %s"
-		target = fetch_one(sql,(usercode))
-		rolecode = target["rolecode"]
+		if self.request.session['user'][0] == "anonymous":
+			rolecode = "anonymous"
+		else:
+			usercode = self.request.session['user'][0]
+			sql = "Select * from ou_userrole where usercode = %s"
+			target = fetch_one(sql,(usercode))
+			rolecode = target["rolecode"]
 		print("222")
 		result1 = resource_access(rolecode,"training/sql/create")
-		print(result1)
+		print(rolecode)
 		result2 = resource_access(rolecode,"training/sql/import")
 		result3 = resource_access(rolecode,"training/sql/detail")
 		result4 = resource_access(rolecode,"training/sql/delete")

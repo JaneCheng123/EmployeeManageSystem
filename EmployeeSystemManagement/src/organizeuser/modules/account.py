@@ -30,7 +30,7 @@ class Account:
 		return self.request,HTML,{'names':json.dumps(names),'emails':json.dumps(emails)}
 
 	def create_save(self):
-		username = self.params["username"]
+		username = self.params["username"].lower()
 		password = self.params["password"]
 		email = self.params["email"]
 		status = self.params["status"]
@@ -39,7 +39,7 @@ class Account:
 		queryset = fetch_one(query,(deptname))
 		deptcode = queryset["deptcode"]
 		insertID = findNextId('djangomysql.ou_account')
-		usercode = username.lower() + str(insertID)
+		usercode = username.lower()
 		m = md5()
 		m.update(password.encode('utf-8'))
 		encodedpsw = m.hexdigest()
@@ -63,7 +63,7 @@ class Account:
 
 	def detail(self):
 		userid = self.params["id"]
-		sql = "select * from djangomysql.ou_account where id=%s"  
+		sql = "select * from ou_account where id=%s"  
 		obj = fetch_one(sql,(userid))
 		HTML = "organizeuser/account/detail.html"
 		context = {
@@ -73,27 +73,30 @@ class Account:
 
 	def delete(self):
 		usercode = self.params["usercode"]
-		sql = "Delete from djangomysql.ou_account where usercode=%s"  
+		sql = "Delete from ou_account where usercode=%s"  
 		delete(sql,(usercode))
-		sql2 = "Delete from djangomysql.ou_userrole where usercode=%s"  
+		sql2 = "Delete from ou_userrole where usercode=%s"  
 		delete(sql2,(usercode))
 		return None,None,None
 
 	def getResource(self):
 		usercode = self.request.session['user'][0]
-		print("userrole is " + str(usercode))
+		print(usercode)
+		if usercode == "anonymous":
+			jsonMenu = [{"code":"menu2","name":"Salary System","sub":[{"code":"sql","name":"Salary Management","url":"training/sql.do?$ACTION=list"},{"code":"stat","name":"Statistic Charts","url":"training/stat.do?$ACTION=list"}]},
+			]
+			HTML = "XHR"
+			return self.request,HTML,JsonResponse(jsonMenu,safe=False)
 		sql = "Select * from ou_userrole where usercode = %s"
 		target = fetch_one(sql,(usercode))
 		rolecode = target["rolecode"]
 		if rolecode == "administrator":
-			jsonMenu = [{"code":"menu1","name":"Organize User","sub":[{"code":"account","name":"Account Management","url":"ou/account.do?$ACTION=list"},
+			jsonMenu = [{"code":"menu2","name":"Salary System","sub":[{"code":"sql","name":"Salary Management","url":"training/sql.do?$ACTION=list"},{"code":"stat","name":"Statistic Charts","url":"training/stat.do?$ACTION=list"}]},
+	        {"code":"menu1","name":"Organize User","sub":[{"code":"account","name":"Account Management","url":"ou/account.do?$ACTION=list"},
 			{"code":"department","name":"Department Management","url":"ou/dept.do?$ACTION=index"},
 			{"code":"role","name":"Role Management","url":"ou/role.do?$ACTION=list"},
 			{"code":"resource","name":"Resource Management","url":"ou/resource.do?$ACTION=list"},
-			{"code":"userresource","name":"Role Resource Management","url":"ou/userrole.do?$ACTION=home"}]},
-
-	        {"code":"menu2","name":"Salary System","sub":[{"code":"sql","name":"Salary Management","url":"training/sql.do?$ACTION=list"},{"code":"stat","name":"Statistic Charts","url":"training/stat.do?$ACTION=list"}]},
-	        {"code":"menu3","name":"Setting","sub":[{"code":"setting","name":"Account Setting","url":"ou/account.do?$ACTION=setting"}]}]
+			{"code":"userresource","name":"Role Resource Management","url":"ou/userrole.do?$ACTION=home"}]},{"code":"menu3","name":"Setting","sub":[{"code":"setting","name":"Account Setting","url":"ou/account.do?$ACTION=setting"}]}]
 		if rolecode == "normaluser":
 			jsonMenu = [{"code":"menu2","name":"Salary System","sub":[{"code":"sql","name":"Salary Management","url":"training/sql.do?$ACTION=list"},{"code":"stat","name":"Statistic Charts","url":"training/stat.do?$ACTION=list"}]},
 			{"code":"menu3","name":"Setting","sub":[{"code":"setting","name":"Account Setting","url":"ou/account.do?$ACTION=setting"}]}]
@@ -199,27 +202,14 @@ class Account:
 		return self.request,HTML,context
 
 	def usermodal(self):
-		# print("here")
-		# HTML = "organizeuser/account/usermodal.html"
-		# users = []
-		# try:
-		# 	dept =  self.params["dept"]
-		# 	print(dept)
-		# 	if dept != None:
-		# 		print("in dept")
-		# 		sql = "Select * from ou_dept where deptname=%s"  
-		# 		res = fetch_one(sql,(dept))
-		# 		deptcode = res["deptcode"]
-		# 		print(deptcode)
-		# 		sql = "Select * from ou_account where deptcode=%s"  
-		# 		res2 = fetch_all(sql,(deptcode))
-		# 		for each in res2:
-		# 			users.append(each["username"])	
-		# 			print(each["username"])
-		# except Exception as e:
-		# 	pass			
-		# context = {'users':users}
-		# return self.request,HTML,context
+		rolecode = self.params["rolecode"]
+		query2 = 'SELECT * FROM ou_userrole where rolecode=%s'
+		queryset2 = fetch_all(query2,(rolecode))
+		usernames = []
+		for each in queryset2:
+			query3 = 'SELECT * FROM ou_account where usercode=%s'
+			queryset3 = fetch_one(query3,(each["usercode"]))
+			usernames.append(queryset3["username"])
 		HTML = "organizeuser/account/deptuser.html"
 		sql = "Select * from ou_dept"
 		queryset = fetch_all(sql,())
@@ -237,12 +227,9 @@ class Account:
 					"user":users,
 				})
 		print(tree)
-		context = {"tree":tree}
-		return self.request,HTML,context
-
-	def modal(self):
-		HTML = "organizeuser/account/deptmodal2.html"
-		context = {}
+		print("back end")
+		print(usernames)
+		context = {"tree":tree,"usernames":usernames}
 		return self.request,HTML,context
 
 

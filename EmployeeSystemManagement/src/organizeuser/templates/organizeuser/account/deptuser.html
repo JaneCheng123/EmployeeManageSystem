@@ -7,7 +7,7 @@
      {% load static %}
      <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
      <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <script type="text/javascript" src="{% static 'js/selectusermodal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/usermodal.js' %}"></script>
 </head>
 
 <style type="text/css">
@@ -40,7 +40,7 @@ body {
 
 
 
-<body onload="loadPage({{tree|safe}});">
+<body onload="loadPage({{tree|safe}},{{usernames|safe}});">
   
 <div class="bodyframe" id="divcontent">
 

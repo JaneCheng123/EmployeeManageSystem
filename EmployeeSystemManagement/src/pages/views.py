@@ -17,15 +17,25 @@ def home_view(request,*args, **kwargs):
 	return render(request,"index.html",{'user':user})
 
 def login(request):
+	sql = "Select * from ou_account"
+	checkset = fetch_one(sql,())
+	if checkset == None:
+		return render(request,"pages/setuplist.html",{})
+	print(request.POST)
 	context = {}
 	HTML = "pages/login.html"
 	if request.method == "POST":
-		username = request.POST.get('username')
+		ano = request.POST.get('anonymous')
+		if ano == "true":
+			user = ["anonymous","anonymous"]
+			request.session['user'] = user
+			return redirect('home')
+		username = request.POST.get('username').lower()
 		password = request.POST.get('password')
 		m = md5()
 		m.update(password.encode('utf-8'))
 		encode = m.hexdigest()
-		sql = "Select * from ou_account where username LIKE BINARY %s"
+		sql = "Select * from ou_account where usercode LIKE BINARY %s"
 		target = fetch_one(sql,username)
 		if target == None:
 			messages.info(request,"Username is incorrect!")
@@ -68,7 +78,7 @@ def register(request):
 	context = {}
 	HTML = "pages/register.html"
 	if request.method == "POST":
-		username = request.POST.get('username')
+		username = request.POST.get('username').lower()
 		password1 = request.POST.get('password1')
 		password2 = request.POST.get('password2')
 		email = request.POST.get('email')
@@ -91,7 +101,7 @@ def register(request):
 		m.update(password2.encode('utf-8'))
 		encodedpsw = m.hexdigest()
 		sql = "Insert Into djangomysql.ou_account (id,usercode,username,passwd,email,userstatus,deptcode,registeredtime) values (%s,%s,%s,%s,%s,%s,%s,%s)"
-		usercode = username.lower() + str(insertID)
+		usercode = username.lower()
 		registertime = strftime("%Y-%m-%d %H:%M:%S",localtime())
 		try:
 			target = insert(sql,(str(insertID),usercode,username,encodedpsw,email,"A","Backend",registertime))

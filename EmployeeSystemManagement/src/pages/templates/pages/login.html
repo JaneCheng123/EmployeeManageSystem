@@ -6,7 +6,17 @@
 
   {% load static %}
    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+<script type="text/javascript">
 
+function anonymous() {
+  var anonymous = document.getElementById("anonymous");
+  anonymous.value = "true";
+  var form = document.getElementById("formData");
+  form.submit();
+
+}
+
+</script>
 
   <style>
     body,
@@ -85,7 +95,8 @@
           <h3 id="form-title">LOGIN</h3>
         </div>
         <div class="d-flex justify-content-center form_container">
-          <form method="POST" action="">
+          <form method="POST" action="" id = "formData" name="formData">
+            <input type="hidden" name="anonymous" id="anonymous" value="false">
             {% csrf_token %}
             <div class="input-group mb-3">
               <div class="input-group-append">
@@ -108,6 +119,10 @@
               <div class="d-flex justify-content-center mt-3 login_container">
                 <input class="btn login_btn" type="submit" value="Login">
                 </div>
+                 <div class="d-flex justify-content-center mt-3 login_container">
+                <button class = "btn btn-secondary" type = "button" onclick="anonymousLogin();"> Login Anonymously</button>
+<!--                 <input class="btn login_btn" type="submit" value="Login Anonymously" onclick="anonymous();"> -->
+                </div>
           </form>
 
         </div>
@@ -120,11 +135,22 @@
           <div class="d-flex justify-content-center links">
             Don't have an account? <a href="/register" class="ml-2">Sign Up</a>
           </div>
-      
+          </div>
         </div>
       </div>
     </div>
   </div>
 </body>
+<script type="text/javascript">
+
+function anonymousLogin() {
+  var ano = document.getElementById("anonymous");
+  ano.value = "true";
+  var form = document.getElementById("formData");
+  form.submit();
+
+}
+
+</script>
 
 </html>

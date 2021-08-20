@@ -21,7 +21,7 @@ function loadPage() {
       var jsonMenu = this.response;
 
       var tag = document.getElementById("allList");
-
+      var src = document.getElementById("ifcontent").getAttribute("src");
       for(var i = 0; i < jsonMenu.length; i++) {
           var li = document.createElement("LI");
           tag.appendChild(li);
@@ -42,6 +42,10 @@ function loadPage() {
               var subAnchor = document.createElement("A");
               subAnchor.setAttribute("href", jsonMenu[i].sub[j].url);
               subAnchor.setAttribute("target", "ifcontent");
+              if(!src) {
+                src = jsonMenu[i].sub[j].url;
+                document.getElementById("ifcontent").setAttribute("src",src);
+              }
 
               var subText = document.createTextNode(jsonMenu[i].sub[j].name);
               subAnchor.appendChild(subText);
@@ -142,7 +146,7 @@ body {
 
 
 <div class="rightframe">
-  <iframe src='training/home' width="100%" height="100%" id="ifcontent" name="ifcontent"></iframe>
+  <iframe src='' width="100%" height="100%" id="ifcontent" name="ifcontent"></iframe>
 </div>
 </div>
 </body>
