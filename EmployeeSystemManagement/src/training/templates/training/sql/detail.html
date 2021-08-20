@@ -1,0 +1,33 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Training >>> Salary Page >>> Detail</span>
+</nav>
+
+<ul class="list-group list-group-flush">
+<li class = "list-group-item list-group-item-primary">employeeid:  {{object.employeeid}}</li>
+<li class = "list-group-item list-group-item-primary">name:  {{object.name}}</li>
+<li class = "list-group-item list-group-item-primary">age:  {{object.age}}</li>
+<li class = "list-group-item list-group-item-primary">department:  {{object.department}}</li>
+<li class = "list-group-item list-group-item-primary">salary:  {{object.salary}}</li>
+<li class = "list-group-item list-group-item-primary">level:  {{object.level}}</li>
+<li class = "list-group-item list-group-item-primary">subsidy:  {{object.subsidy}}</li>
+<li class = "list-group-item list-group-item-primary">total:  {{object.total}}</li>
+</ul>
+<button class = "btn btn-outline-dark"  onclick="location.href = '/training/sql.do?$ACTION=list'">
+          Go Back
+</button>
+
+
+  </body>
+</html>
+

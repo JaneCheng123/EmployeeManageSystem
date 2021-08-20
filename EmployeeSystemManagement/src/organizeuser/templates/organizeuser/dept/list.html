@@ -1,0 +1,195 @@
+<!Doctype>
+<html>
+<head>
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+	<meta charset="utf-8">
+	<script type="text/javascript">
+		function ondelete(key,name,code) {
+			if (!confirm("Are you sure to delete the " + name)) {
+				return false;
+			}
+
+			location.href="/ou/dept.do?$ACTION=delete&deptcode=" + key+"&pathcode="+code;
+
+			return false;
+		}
+
+		function onsearch(page) {
+			var form = document.getElementById("formData");
+
+		    var action = document.getElementById("page");
+		    action.value = page;
+
+		    var condition = document.getElementById("c");
+		    condition.value = '{{t}}';
+		    var q = document.getElementById("v");
+		    q.value = '{{v}}';
+		    		    
+		    form.submit();
+		    return false;
+		}
+
+		function search(){
+			var form = document.getElementById("formData");
+
+			var condition = document.getElementById("c");
+		    condition.value = '{{t}}';
+		    var q = document.getElementById("v");
+		    q.value = '{{v}}';
+
+			form.submit();
+			return false;
+		}
+
+		function passIn(page) {
+			var p = document.getElementById("page");
+			p.value = page;
+		}
+
+		function pageSearch(){
+			var page = document.getElementById("page").value;
+			location.href="/ou/dept.do?$ACTION=list&orderby={{order}}&page=" + page;
+			return false;
+		}
+
+		function refresh(y){
+			if (y === "yes"){
+				window.parent.refresh('dept.do?$ACTION=leftindex');	
+			}
+        }
+	</script>
+</head>
+<body onload="refresh('{{refresh}}');">
+	<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+		<span class="navbar-brand mb-0 h1"> >>> Department >>> List</span>
+	</nav>
+
+	<button type="button" class="btn btn-info" onclick="location.href = '/ou/dept.do?$ACTION=insert&pathcode='+'{{pcode}}'">
+		Create new department
+	</button>
+
+	<select class="btn btn-light">
+		<option onclick="location.href = '/ou/dept.do?$ACTION=list&orderby={{order}}&page=1'">Order By {{order}}</option>
+		<option onclick="location.href = '/ou/dept.do?$ACTION=list&orderby=id&page=1'">Order By id</option>
+		<option onclick="location.href = '/ou/dept.do?$ACTION=list&orderby=deptcode&page=1'">Order By department code</option>
+		<option onclick="location.href = '/ou/dept.do?$ACTION=list&orderby=deptname&page=1'">Order department name</option>
+		<option onclick="location.href = '/ou/dept.do?$ACTION=list&orderby=status&page=1'">Order By status</option>
+	</select>
+
+	<form  method="POST" action="/ou/dept.do" id="formData" name="formData">
+		{% csrf_token %}
+		<input type="hidden" name="$ACTION" id="$ACTION" value="list">
+		<input type="hidden" name="page" id="page" value="1">
+
+		{% if t != "" %}
+			<select class="btn btn-warning" name='condition' id="c">
+				<option value="{{t}}">Search By {{t}}</option>
+				<option value="deptcode">Search By department code</option>
+				<option value="deptname">Search By department name</option>
+				<option value="status">Search By status</option>
+			</select>
+		{% else %}
+			<select class="btn btn-warning" name='condition' id="c">
+				<option value="deptcode">Search By department code</option>
+				<option value="deptname">Search By department name</option>
+				<option value="status">Search By status</option>
+			</select>
+		{% endif %}
+
+		<input type="text" id="v" name="value" value="{{v}}" placeholder="Search" />
+		<input class="btn btn-warning btn-sm" type="submit" value="Search" />
+
+		<style>
+		table, th, td{
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		th, td{
+			text-align: center;
+			padding: 10px;
+		}
+		</style>
+
+		<table class="table table-hover">
+			<tr>
+				<th scpoe='col'>ID</th>
+				<th scpoe='col'>Department Code</th>
+				<th scpoe='col'>Department Name</th>
+				<th scpoe='col'>Status</th>
+				<th scpoe='col'>Actions</th>
+			</tr>
+			<tbody>
+			{% for obj in page_obj %}
+				<tr>
+					<td>{{ obj.id }}</td>
+					<td>{{ obj.deptcode }}</td>
+					<td>{{ obj.deptname }}</td>
+					<td>{{ obj.deptstatus }}</td>
+					<td>
+						<button type="button" class="btn btn-info btn-sm" onclick="location.href = '/ou/dept.do?$ACTION=detail&deptcode={{obj.deptcode}}'">
+							Detail
+						</button>
+						&nbsp;&nbsp;
+						<button type="button" class="btn btn-danger btn-sm" onclick="return ondelete('{{obj.deptcode}}','{{obj.deptname}}','{{obj.pathcode}}');">
+							Delete
+						</button>
+						&nbsp;&nbsp;
+						<button type="button" class="btn btn-secondary btn-sm" onclick="location.href = '/ou/dept.do?$ACTION=select&deptcode={{obj.deptcode}}'">
+							Edit
+						</button>
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+		{% if t != "" %}
+			<p>
+				{% if page_obj.has_other_pages %}
+					{% if page_obj.has_previous %}
+						<button type="button" class="btn btn-dark btn-sm" onclick="return onsearch('{{page_obj.previous_page_number}}');">
+							Previous Page
+						</button>
+					{% endif %}
+
+					<span class="current">
+						Page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+					</span>
+					
+					{% if page_obj.has_next %}
+						<button type="button" class="btn btn-dark btn-sm" onclick="return onsearch('{{page_obj.next_page_number}}');">
+							Next Page
+						</button>
+					{% endif %}
+					
+					<input type="text" id="pagenum" name="papgenum" onchange="passIn(this.value);" placeholder="Page Search" />
+					<input class="btn btn-dark btn-sm" type="button" value="Search" onclick="return search();" />
+				{% endif %}
+			</p>
+		{% else %}
+			<p>
+				{% if page_obj.has_other_pages %}
+					{% if page_obj.has_previous %}
+						<button type="button" class="btn btn-dark btn-sm" onclick="location.href = '/ou/dept.do?$ACTION=list&orderby={{order}}&page={{page_obj.previous_page_number}}'" />
+								Previous Page
+						</button>
+					{% endif %}
+
+					<span class="current">
+						Page {{page_obj.number}} of {{page_obj.paginator.num_pages}}
+					</span>
+					
+					{% if page_obj.has_next %}
+						<button type="button" class="btn btn-dark btn-sm" onclick="location.href='/ou/dept.do?$ACTION=list&orderby={{order}}&page={{page_obj.next_page_number}}'">
+						Next Page
+						</button>
+					{% endif %}
+					
+					<input type="text" id="pagenum" name="papgenum" onchange="passIn(this.value);" placeholder="Page Search" />
+					<input class="btn btn-dark btn-sm" type="button" value="Search" onclick="return pageSearch();" />
+				{% endif %}
+			</p>
+		{% endif%}
+	</form>
+</body>
+</html>

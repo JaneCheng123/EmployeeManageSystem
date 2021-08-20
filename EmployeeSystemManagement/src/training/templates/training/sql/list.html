@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+<script type="text/javascript">
+function loadPage() {
+
+  var xhr2 = new XMLHttpRequest();
+  xhr2.open('GET',"sql.do?$ACTION=get_list_resource");
+  xhr2.responseType = 'json';
+  xhr2.onload = function(e) {
+      var jsonMenu = this.response;
+      if(jsonMenu["training/sql/create"] == "N") {
+        var element = document.getElementById("training/sql/create");
+        element.setAttribute("disabled", true);
+      }
+      if(jsonMenu["training/sql/import"] == "N") {
+        var element = document.getElementById("training/sql/import");
+        element.setAttribute("disabled", true);
+      }
+      if(jsonMenu["training/sql/detail"] == "N") {
+        var element = document.getElementById("training/sql/detail");
+        element.setAttribute("disabled", true);
+      }
+      if(jsonMenu["training/sql/delete"] == "N") {
+        let elements = document.getElementsByClassName("training/sql/delete");
+        Array.from(elements).forEach((element) => {
+            console.log("111");
+            element.setAttribute("disabled", true);
+        });
+      }
+      if(jsonMenu["training/sql/update"] == "N") {
+        let elements = document.getElementsByClassName("training/sql/update");
+        Array.from(elements).forEach((element) => {
+            console.log("222");
+            element.setAttribute("disabled", true);
+        });
+      }
+  }
+  xhr2.send();
+
+}
+
+function ondelete(key,name) {
+  if (!confirm("Delete the employee " + name + " ?")) {
+    return false;
+  }
+
+  location.href="/training/sql.do?$ACTION=delete&employeeid=" + key;
+
+  return false;
+} 
+
+function searchForm(pagenum,t,q) {
+    var t_element = document.getElementById("t");
+    var q_element = document.getElementById("q");
+    t_element.value = t;
+    q_element.value = q;
+    var page = document.getElementById("page");
+    page.value = pagenum;
+    form.submit();
+    return false;
+}    
+
+function submitForm() {
+    var form = document.getElementById("formData");
+    form["$ACTION"] = "search";
+    form.submit();
+    return false;
+}
+// document.getElementById("searchButton").addEventListener("click",clear);
+</script>
+
+  </head>
+<body onload="loadPage();">
+  <nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Training >>> Salary Page </span>
+</nav>
+
+<button  class = "btn btn-outline-dark" onclick="location.href = '/training/home'">
+ Go to homepage
+</button>
+<button  class = "btn btn-secondary" name= "training/sql/create" id = "training/sql/create" onclick="location.href = '/training/sql.do?$ACTION=create'">
+ Create
+</button>
+<button  class = "btn btn-outline-warning" name= "training/sql/import" id = "training/sql/import" onclick="location.href = '/training/sql.do?$ACTION=importcsv'">
+ Import from csv
+</button>
+<select class = "btn btn-info" style="float:right;" >
+  <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page=1'"> List ordered by {{order}} </option>
+    <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby=employeeid&page=1'"> List ordered by employeeid </option>
+    <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby=name&page=1'"> List ordered by name </option>
+    <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby=level&page=1'"> List ordered by level </option>
+    <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby=total&page=1'"> List ordered by total </option>
+</select>
+
+
+<form action = "/training/sql.do" name="formData" id="formData" method="POST"> 
+   {% csrf_token %}
+    <input type="hidden" id="$ACTION" name="$ACTION" value="search">
+    <input type="hidden" name="page" id="page" value="1">
+  <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+{% if t == None %}
+  <div class="form-row">
+  <div class="col-auto">
+  <select class = "btn btn-danger" style="float:left;" id = "t"  name="t" >
+      <option > employeeid </option>
+    <option > name </option>
+    <option > department </option>
+    <option > level </option>
+</select>
+</div>
+<div class="form-group col-auto">
+  <input class="form-control"   style="float:left;"  type="text" id = "q" name="q" placeholder="Search..."> 
+  </div>
+    <div class="col-auto">
+  <input   class = "btn btn-primary"  type='submit'
+   value='Search' />
+</div>
+</div>
+{% else %}
+  <div class="form-row">
+  <div class="col-auto">
+  <select class = "btn btn-danger" style="float:left;" id = "t"  name="t" >
+      <option value = "{{t}}" > {{t}} </option>
+      <option value = "employeeid"> employeeid </option>
+    <option value = "name"> name </option>
+    <option value = "department"> department </option>
+    <option value = "level"> level </option>
+</select>
+</div>
+<div class="form-group col-auto">
+  <input class="form-control"   style="float:left;"  type="text" id = "q" name="q" value={{q}}> 
+  </div>
+    <div class="col-auto">
+  <input   class = "btn btn-primary"  type='submit'
+   value='Search' />
+</div>
+</div>
+{% endif %}
+</nav>
+
+
+
+
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Employeeid</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Department</th>
+        <th>Level</th>
+        <th>Total Salary</th>
+        <th>Manipulate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in page_obj %}
+        <tr>
+          <td >{{ obj.employeeid }}</td>
+          <td>{{ obj.name }}</td>
+          <td>{{ obj.age }}</td>
+          <td>{{ obj.department }}</td>
+          <td>{{ obj.level }}</td>
+          <td>{{ obj.total }}</td>
+        <td>
+         <button  type = "button" class = "btn btn-info" name= "training/sql/detail" id = "training/sql/detail" value= 3 onclick="location.href = '/training/sql.do?$ACTION=detail&employeeid={{obj.employeeid}}'">
+          Card
+          </button>
+          <button  class = "btn btn-dark training/sql/delete"  onclick="return ondelete('{{obj.employeeid}}','{{obj.name}}')">
+          Delete
+          </button>
+          <button  class = "btn btn-secondary training/sql/update" type = "button"  onclick="location.href = '/training/sql.do?$ACTION=select&employeeid={{obj.employeeid}}'">
+          Edit
+          </button>
+          </td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  {% if t == None %}
+  <div  class = "text-center">
+  {% if page_obj.has_other_pages %}
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+     <button  class = "btn btn-success" type="button" onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ page_obj.previous_page_number }}'">Previous Page</button>
+      {% else %}
+        <button  class = "btn btn-success" disabled>Previous Page</button>
+      {% endif %}
+
+      {% if page_obj.number|add:'-4' > 1 %}
+              <button  class = "btn btn-outline-success" type="button" onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ page_obj.number|add:'-5'}}'">...</button>
+      {% endif %}
+
+      <div class = "btn-group" role = "group" aria-label="Basic outlined example">
+      {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+          <button class = "btn btn-success" type="button" ><span>{{ i }} <span class="sr-only">(current)</span></span></button>
+        {% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+          <button class = "btn btn-outline-success" type="button" onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ i }}'">{{ i }}</button>
+        {% endif %}
+      {% endfor %}
+     </div>
+
+     {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+              <button  class = "btn btn-outline-success" type="button" onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ page_obj.number|add:'5'}}'">...</button>
+      {% endif %}
+
+      {% if page_obj.has_next %}
+        <button  class = "btn btn-success" type="button"  onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ page_obj.next_page_number }}'">Next Page</button>
+      {% else %}
+        <button  class = "btn btn-success" disabled>Next Page</button>
+      {% endif %}
+    </ul>
+  {% endif %}
+  </div>
+
+  {% else %}
+    <div  class = "text-center">
+  {% if page_obj.has_other_pages %}
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+     <button  class = "btn btn-success" onclick="return searchForm('{{ page_obj.previous_page_number }}','{{t}}','{{q}}');">Previous Page</button>
+      {% else %}
+        <button  class = "btn btn-success" disabled>Previous Page</button>
+      {% endif %}
+
+
+      {% if page_obj.number|add:'-4' > 1 %}
+              <button  class = "btn btn-outline-success"  onclick="return searchForm('{{ page_obj.number|add:'-5' }}','{{t}}','{{q}}');">...</button>
+      {% endif %}
+
+      <div class = "btn-group" role = "group" aria-label="Basic outlined example">
+      {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+          <button class = "btn btn-success" class="active" onclick="return searchForm('{{ i }}','{{t}}','{{q}}');"><span>{{ i }} <span class="sr-only">(current)</span></span></button>
+        {% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+          <button class = "btn btn-outline-success" onclick="return searchForm('{{i}}','{{t}}','{{q}}');">{{ i }}</button>
+        {% endif %}
+      {% endfor %}
+     </div>
+
+
+     {% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+              <button  class = "btn btn-outline-success"  onclick="return searchForm('{{ page_obj.number|add:'5' }}','{{t}}','{{q}}');">...</button>
+      {% endif %}
+
+      {% if page_obj.has_next %}
+        <button  class = "btn btn-success" onclick="return searchForm('{{ page_obj.next_page_number }}','{{t}}','{{q}}');">Next Page</button>
+      {% else %}
+        <button  class = "btn btn-success" disabled>Next Page</button>
+      {% endif %}
+    </ul>
+  {% endif %}
+  </div>
+  {% endif %}
+ 
+
+
+
+</form> 
+
+
+
+
+
+
+</body>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+</html>
+

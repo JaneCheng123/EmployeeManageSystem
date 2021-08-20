@@ -1,0 +1,33 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Organize User >>> Account Page >>> Detail</span>
+</nav>
+
+<ul class="list-group list-group-flush">
+<li class = "list-group-item list-group-item-primary">id:  {{object.id}}</li>
+<li class = "list-group-item list-group-item-primary">usercode:  {{object.usercode}}</li>
+<li class = "list-group-item list-group-item-primary">username:  {{object.username}}</li>
+<li class = "list-group-item list-group-item-primary">passwd:  {{object.passwd}}</li>
+<li class = "list-group-item list-group-item-primary">email:  {{object.email}}</li>
+<li class = "list-group-item list-group-item-primary">status:  {{object.status}}</li>
+<li class = "list-group-item list-group-item-primary">registeredtime:  {{object.registeredtime}}</li>
+<li class = "list-group-item list-group-item-primary">lastlogin:  {{object.lastlogin}}</li>
+</ul>
+<button class = "btn btn-outline-dark"  onclick="location.href = '/ou/account.do?$ACTION=list'">
+          Go Back
+</button>
+
+
+  </body>
+</html>
+

@@ -1,0 +1,155 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+  </head>
+
+<script type="text/javascript">
+function validateForm() {
+          let age = document.forms["formData"]["age"].value;
+          if (age == "") {
+            alert("Age must be filled out!");
+            return false;
+          }
+          else if (!(/^[1-6][0-9]$/.test(age))){
+            alert("The age you entered is not valid!");
+            return false;
+          }
+          else if (age < 20 || age > 59){
+            alert("Age you entered is not in the valid range (20-59)!");
+            return false;
+          }
+          if (document.forms["formData"]["department"].value == "") {
+            alert("Department must be chosen from the list!");
+            return false;
+          }
+          let hiredate = document.forms["formData"]["hiredate"].value;
+          if(!(hiredate.length==10 && hiredate.charAt(4) == '-' && hiredate.charAt(7) == '-')) {
+            alert("Hiredate should be of form YYYY-MM-DD!");
+            return false;
+          }
+          var date = new Date(hiredate)
+          if (isNaN(date.getTime())){
+            alert("Hiredate is not valid!");
+            return false;
+          }
+          var today = new Date()
+          if (date > today){
+            alert("Hiredate is after the current date!");
+            return false;
+          }
+          let salary = document.forms["formData"]["salary"].value
+          if (salary == "") {
+            alert("Salary must be filled out!");
+            return false;
+          }
+          else if (!(/^\d+$/.test(salary))){
+            alert("The salary you entered is not valid! It should be a positive integer.");
+            return false;
+          }
+          let level = document.forms["formData"]["level"].value
+          if (level == "") {
+            alert("Level must be filled out!!");
+            return false;
+          }
+          else if (!(/^\d+$/.test(level))){
+            alert("The level you entered is not valid!");
+            return false;
+          }
+}   
+
+
+</script>
+
+
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Training >>> Salary Page >>> Edit</span>
+</nav>
+<!-- <ul class="list-group list-group-flush">
+<li class = "list-group-item list-group-item-primary">employeeid:  {{object.employeeid}}</li>
+<li class = "list-group-item list-group-item-primary">name:  {{object.name}}</li>
+</ul> -->
+<form action="/training/sql.do" method="POST" id="formData" name="formData" onsubmit ="return validateForm()"> 
+    <input type="hidden" id="$ACTION" name="$ACTION" value="update">
+    <input type="hidden" name="employeeid" id="employeeid" value="{{obj.employeeid}}">
+    {% csrf_token %}
+
+
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" style="margin-left: 10px;" >Employeeid:      {{obj.employeeid}}</a>
+  </div>
+  <div class="container-fluid">
+    <a class="navbar-brand" style="margin-left: 10px;" >Name:      {{obj.name}}</a>
+  </div>
+</nav>
+
+
+  <div class="mb-3 row">
+    <label for="age" style="margin-left: 20px;" class="col-sm-2 col-form-label">Age</label>
+    <div class="col-sm-8">
+      <input type="int" class="form-control" id="age" name = "age" value="{{obj.age}}">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="department" style="margin-left: 20px;" class="col-sm-2 col-form-label">Department</label>
+    <div class="col-sm-8">
+          <select class="form-select" aria-label="Default select example" name="department" data_style="btn-primary">
+            <option value="{{obj.department}}">Current department is {{obj.department}}</option>
+            <option value="Development">Development</option>
+            <option value="Ministry of Law">Ministry of Law</option>
+            <option value="Production">Production</option>
+            <option value="Purchasing">Purchasing</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Finance">Finance</option>
+            <option value="Testing">Testing</option>
+            <option value="Customer Service">Customer Service</option>
+            <option value="Human Resource">Human Resource</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="hiredate" style="margin-left: 20px;" class="col-sm-2 col-form-label">Hiredate</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="hiredate" name="hiredate"  value={{obj.hiredate}}>
+    </div>
+  </div>
+
+    <div class="mb-3 row">
+    <label for="salary" style="margin-left: 20px;" class="col-sm-2 col-form-label">Salary</label>
+    <div class="col-sm-8">
+      <input type="int" class="form-control" id="salary" name="salary"  value={{obj.salary}}>
+    </div>
+  </div>
+
+    <div class="mb-3 row">
+    <label for="level" style="margin-left: 20px;" class="col-sm-2 col-form-label">Level</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="level" name="level"  value={{obj.level}} onchange="return validateLevel(this.value)">
+    </div>
+  </div>
+
+
+
+
+<button class = "btn btn-outline-success" type="submit" value="update"  > Update </button>
+<!-- <p class="submit"><input type="submit" value="delete"  onclick="return deleteRow();" /></p>  -->
+</form> 
+
+<button  style="margin-left: 14px;" class = "btn btn-outline-dark" onclick="location.href = '/training/sql.do?$ACTION=list'">
+ Go to List Page
+</button>
+
+
+</html>
+

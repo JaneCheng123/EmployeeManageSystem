@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		{% load static %}
+		<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+		<link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+	</head>
+
+	<body>
+		<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+            <span class="navbar-brand mb-0 h1"> >>> Organizer User >>> User Role Main Page</span>
+        </nav>
+		<h1> User Role Management </h1>
+		<br>
+		<button class="btn btn-outline-info" onclick="location.href = '/ou/role.do?$ACTION=list'">
+			Manage Roles
+		</button>
+		<button class="btn btn-outline-info" onclick="location.href = '/ou/resource.do?$ACTION=list'">
+			Manage Resources
+		</button>
+		<br>
+		<button class="btn btn-primary" onclick="location.href = '/ou/userrole.do?$ACTION=list'">
+			Manage Roles for Users
+		</button>
+		<button class="btn btn-primary" onclick="location.href = '/ou/userrole.do?$ACTION=rolelist'">
+			Manage Users for Roles
+		</button>
+		<button class="btn btn-primary" onclick="location.href = '/ou/roleresource.do?$ACTION=list'">
+			Manage Resources for Roles
+		</button>
+		<br>
+
+	</body>
+</html>

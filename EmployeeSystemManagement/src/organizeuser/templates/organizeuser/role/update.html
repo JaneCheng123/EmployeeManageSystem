@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+		<script type="text/javascript">
+      function validateId(key){
+          var rolecodes = {{ rolecodes|safe }};
+          return rolecodes.includes(key);
+        }
+
+        function validateForm() {
+          let rolecode = document.forms["formData"]["newrolecode"].value;
+          if (rolecode == "") {
+            alert("Role code must be filled out!");
+            return false;
+          }
+          if (validateId(rolecode)){
+            alert("The role code you entered has already existed! Please enter another one.");
+            return false;
+          }
+          if (rolecode.includes(" ")){
+            alert("The role code you entered was invalid! It should not contain any space. Please enter another one.");
+            return false;
+          }
+          if (document.forms["formData"]["rolename"].value == "") {
+            alert("Role name must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["description"].value == "") {
+            alert("Description must be filled out!");
+            return false;
+          }
+          let seqnum = document.forms["formData"]["seqnum"].value;
+          if (seqnum == "") {
+            alert("Sequence number must be filled out!");
+            return false;
+          }
+          if (!(/^[1-9]\d*$/.test(seqnum))){
+            alert("The sequence number you entered is not valid! It should be a positive integer.");
+            return false;
+          }
+        }  
+		</script>
+	</head>
+
+	<body>
+		<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+		  <span class="navbar-brand mb-0 h1"> >>> Organizer User >>> Role Page >>> Edit</span>
+		</nav>
+		<form action="/ou/role.do" method="POST" id="formData" name="formData" onsubmit ="return validateForm()"> 
+		    <input type="hidden" id="$ACTION" name="$ACTION" value="update">
+		    <input type="hidden" name="rolecode" id="rolecode" value="{{rolecode}}">
+		    {% csrf_token %}
+		  <div class="mb-3 row">
+		    <label style="margin-left: 20px;" for="age" class="col-sm-2 col-form-label">Role Code: </label>
+		    <div class="col-sm-10">
+		      <input style="margin-left: 20px;"  type="text" class="form-control" id="newrolecode" name = "newrolecode" value="{{rolecode}}">
+		    </div>
+		  </div>
+		  <div class="mb-3 row">
+		    <label style="margin-left: 20px;" for="hiredate" class="col-sm-2 col-form-label">Role Name: </label>
+		    <div class="col-sm-10">
+		      <input style="margin-left: 20px;" type="text" class="form-control" id="rolename" name="rolename"  value="{{rolename}}">
+		    </div>
+		  </div>
+
+		    <div class="mb-3 row">
+		    <label style="margin-left: 20px;" for="salary" class="col-sm-2 col-form-label">Description: </label>
+		    <div class="col-sm-10">
+		      <textarea style="margin-left: 20px;" type="text" class="form-control" id="description" name = "description" rows="3">{{description}}</textarea>
+		    </div>
+		  </div>
+
+		    <div class="mb-3 row">
+		    <label style="margin-left: 20px;" for="level" class="col-sm-2 col-form-label">Sequece Number: </label>
+		    <div class="col-sm-10">
+		      <input style="margin-left: 20px;" type="int" class="form-control" id="seqnum" name="seqnum"  value="{{seqnum}}">
+		    </div>
+		  </div>
+		<button style="margin-left: 20px;" class = "btn btn-outline-success" type="submit" value="save"> Save </button>
+		</form> 
+
+		<button  style="margin-left: 20px;" class = "btn btn-outline-dark" onclick="location.href = '/ou/role.do?$ACTION=list'">
+		 Go Back
+		</button>
+	</body>
+</html>

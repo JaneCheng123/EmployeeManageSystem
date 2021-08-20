@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+
+
+<script type="text/javascript">
+function loadPage() {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET',"ou/account.do?$ACTION=getResource");
+  xhr.responseType = 'json';
+  xhr.onload = function(e) {
+      console.log('response', this.response);
+      var jsonMenu = {{users|safe}};
+
+      var tag = document.getElementById("allList");
+      var id = 1;
+      for(var i = 0; i < jsonMenu.length; i++) {
+          var li = document.createElement("LI");
+          tag.appendChild(li);
+
+
+          var a = document.createElement("A");
+          // a.setAttribute("href","#");
+          // if(jsonMenu[i].sub.length != 0) {
+          //     a.setAttribute("class" ,"dropdown-toggle");
+          // }
+
+          a.innerText = jsonMenu[i];
+          var check = document.createElement("input");
+          check.type = "checkbox";
+          check.className = "selected";
+          // check.id = "selectedDept"+id.toString();
+          // check.name = "selectedDept"+id.toString();
+          // check.setAttribute("onclick","selectOne("+ id +")");
+          // id = id + 1;
+          check.value = jsonMenu[i];
+          console.log(check.value);
+          li.appendChild(check);
+          li.appendChild(a);
+      }
+  }
+  xhr.send();
+
+}
+
+function dropDown(event) {
+  var tag = event.target;
+
+  tag = tag.nextSibling;
+  var state = tag.style.display;
+  if (state && state=="none")
+    tag.style.display = "block";
+  else
+    tag.style.display = "none";
+}
+
+function selectOne(id) {
+  var checkbox = document.getElementsByClassName("selected");
+  Array.prototype.forEach.call(checkbox,function(el) {
+      el.checked = false;
+  });
+  document.getElementById("selectedDept"+id.toString()).checked = true;
+}
+
+</script>
+<style type="text/css">
+html {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+
+ .bodyframe {
+    display: flex;
+    flex-direction:row;
+    align-items:stretch;
+    justify-content:space-between;    
+    width: 100%;
+    height: 100%;
+ } 
+
+ .rightframe {
+  width: 100%;
+ }
+
+</style>
+
+
+
+<body onload="loadPage();">
+  
+<div class="bodyframe" id="divcontent">
+
+   <ul class="lisst-unstyled components" name="allList" id="allList">
+
+
+
+   </ul>
+
+
+
+    
+
+
+
+
+</body>
+
+
+</html>

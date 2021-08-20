@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <script type="text/javascript" src="{% static 'js/usermodal.js' %}"></script>
+
+<script type="text/javascript">
+function ondelete(key,name) {
+  if (!confirm("Delete the account " + name + " ?")) {
+    return false;
+  }
+  location.href="/ou/account.do?$ACTION=delete&usercode=" + key;
+
+  return false;
+} 
+
+function searchForm(pagenum,t,q) {
+    var t_element = document.getElementById("t");
+    var q_element = document.getElementById("q");
+    t_element.value = t;
+    q_element.value = q;
+    var page = document.getElementById("page");
+    page.value = pagenum;
+    form.submit();
+    return false;
+}    
+
+function submitForm() {
+    var form = document.getElementById("formData");
+    form["$ACTION"] = "search";
+    form.submit();
+    return false;
+}
+
+function updateUser(user) {
+  console.log(user);
+}
+
+
+
+</script>
+
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+  <span class = "navbar-brand mb-0 h1"> >>> Organze User >>> User Role Management >> Role List
+</nav>
+
+
+<button  class = "btn btn-outline-success" onclick="location.href = '/ou/userrole.do?$ACTION=home'">
+ Go Back
+</button>
+
+
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>rolecode</th>
+        <th>rolename</th>
+        <th>description</th>
+        <th>Users</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in page_obj %}
+        <tr>
+          <td>{{ obj.rolecode }}</td>
+          <td>{{ obj.rolename }}</td>
+          <td>{{ obj.description }}</td>
+        <td>
+          <button type="button" class = "btn btn-primary" onclick="location.href = '/ou/userrole.do?$ACTION=rolelistuser&rolecode={{obj.rolecode}}'">
+          Select User</button>
+          </td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+      <script type="text/javascript" src="{% static 'js/modal.js' %}"></script>
+    </head>
+
+
+
+<script type="text/javascript">
+
+function validateName(key){
+          var codes = {{names|safe}};
+          return codes.includes(key);
+        }
+function validateEmail(key){
+          var codes = {{emails|safe}};        
+          return codes.includes(key);
+        }
+function validateForm() {
+          if (document.forms["formData"]["status"].value == "") {
+            alert("Status must be chosen from the list!");
+            return false;
+          }
+          if (document.forms["formData"]["username"].value == "") {
+            alert("Username must be filled out!");
+            return false;
+          }
+          if (validateName(document.forms["formData"]["username"].value)) {
+            alert("Username already existed!");
+            return false;
+          }
+          if (document.forms["formData"]["password"].value == "") {
+            alert("Password must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["email"].value == "") {
+            alert("Email must be filled out!");
+            return false;
+          }
+          if (validateEmail(document.forms["formData"]["email"].value)) {
+            alert("Email already used!");
+            return false;
+          }
+          if (document.forms["formData"]["deptcode"].value == "") {
+            alert("Deptcode must be filled out!");
+            return false;
+          }
+}
+
+// function getDept() {
+//   var users = "";
+//   var iframe = document.getElementById("modalcontent");
+//   var checkbox = iframe.contentWindow.document.getElementsByClassName("selected");
+//   Array.prototype.forEach.call(checkbox,function(el) {
+//       if(el.checked == true) {
+//          var dept = document.getElementById("deptname");
+//          dept.value = el.value;
+//       }
+//   });
+
+
+// } 
+
+function closeModal() {
+    var div = document.getElementById("modal-dialog");
+    div.remove();
+    var div = document.getElementById("staticBackdrop");
+    div.remove();   
+}
+
+</script>
+<body>
+
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Organize User >>> Account Page >>> Create</span>
+</nav>
+
+<form action='/ou/account.do' method='POST' 
+onsubmit ="return validateForm()" class="needs-validation" novalidate name = "formData">{% csrf_token %}
+ <input type="hidden" id="$ACTION" name="$ACTION" value="create_save">
+
+
+    <div class="mb-3 row">
+    <label for="username" style="margin-left: 20px;" class="col-sm-2 col-form-label">username</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="username" name = "username" value="{{username}}" placeholder="Username...">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="password" style="margin-left: 20px;" class="col-sm-2 col-form-label">password</label>
+    <div class="col-sm-8">
+      <input type="password" class="form-control" id="password" name = "password" value="{{password}}" placeholder="Password...">
+    </div>
+  </div>
+
+    <div class="mb-3 row">
+    <label for="email" style="margin-left: 20px;" class="col-sm-2 col-form-label">email</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="email" name = "email" value="{{email}}" placeholder="Email...">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="status" style="margin-left: 20px;" class="col-sm-2 col-form-label">status</label>
+    <div class="col-sm-8">
+          <select class = "btn btn-info" aria-label="Default select example" name="status" id = "status" data_style="btn-primary">
+            <option value="A">Active</option>
+            <option value="I">Inactive</option>
+            <option value="F">Forbidden</option>
+          </select>
+    </div>
+  </div>
+<input type="hidden" id="deptcode" name="deptcode">
+  <div class="mb-3 row">
+    <label for="hiredate" style="margin-left: 20px;" class="col-sm-2 col-form-label">deptname</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="deptname" name="deptname" placeholder="Department Name...">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+onclick="selectDept('checkbox','deptcode','deptname','closeModal');">
+  Launch department modal
+</button>
+    </div>
+
+  </div>
+
+
+<div class="form-group col-md-1">
+<input class = "form-control" type='submit' value='Save' />
+</div>
+
+</form>
+
+<button  style="margin-left: 14px;" class = "btn btn-outline-dark" onclick="location.href = '/ou/account.do?$ACTION=list'">
+ Go to List Page
+</button>
+
+
+  </body>
+</html>
+

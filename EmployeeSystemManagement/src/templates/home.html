@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    </head>
+
+<div class = "text-center">
+<h1> Employee Salary Manage System</h1>
+
+<div class = "btn-group btn-group-xl" role = "group" aria-label="Basic outlined example">
+<button class = "btn btn-info" onclick="location.href = '/training/sql.do?$ACTION=list'">
+ Go To Salary Page
+</button>
+<button class = "btn btn-info"onclick="location.href = '/training/stat.do?$ACTION=list'">
+ Go To Stat Page
+</button>
+</div>
+<button class = "btn btn-info"onclick="location.href = '/ou/list'">
+ Go To Organize User Page
+</button>
+<button class = "btn btn-info" onclick= "location.href = '/ou/setup'">
+ Set Up System
+</button>
+</div>
+
+
+
+  </body>
+</html>
+

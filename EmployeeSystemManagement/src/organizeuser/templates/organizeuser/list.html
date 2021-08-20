@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Organize User</title>
+     {% load static %}
+     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+</head>
+<body>
+
+  
+
+
+<div id="content">
+  <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+  <span class = "navbar-brand mb-0 h1"> >>> Organze User
+</nav>
+
+<p>
+  <button class = "btn btn-outline-dark"onclick="location.href = '/'">
+            Go to home page
+  </button>
+  <div class = "btn-group" role = "group" aria-label="Basic outlined example">
+  <button class = "btn btn-primary" onclick="location.href = '/ou/account.do?$ACTION=list'">
+            Account Manage
+  </button>
+  <button class = "btn btn-primary" onclick="location.href = '/ou/dept.do?$ACTION=list'" disabled>
+            Department Manage
+  </button>
+</div>
+</p>
+
+
+  
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

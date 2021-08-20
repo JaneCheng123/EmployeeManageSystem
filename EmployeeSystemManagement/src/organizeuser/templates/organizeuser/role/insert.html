@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+      <script type="text/javascript">
+        function validateId(key){
+          var rolecodes = {{ rolecodes|safe }};
+          return rolecodes.includes(key);
+        }
+
+        function validateForm() {
+          let rolecode = document.forms["formData"]["rolecode"].value;
+          if (rolecode == "") {
+            alert("Role code must be filled out!");
+            return false;
+          }
+          if (validateId(rolecode)){
+            alert("The role code you entered has already existed! Please enter another one.");
+            return false;
+          }
+          if (rolecode.includes(" ")){
+            alert("The role code you entered was invalid! It should not contain any space. Please enter another one.");
+            return false;
+          }
+          if (document.forms["formData"]["rolename"].value == "") {
+            alert("Role name must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["description"].value == "") {
+            alert("Description must be filled out!");
+            return false;
+          }
+          let seqnum = document.forms["formData"]["seqnum"].value;
+          if (seqnum == "") {
+            alert("Sequence number must be filled out!");
+            return false;
+          }
+          if (!(/^[1-9]\d*$/.test(seqnum))){
+            alert("The sequence number you entered is not valid! It should be a positive integer.");
+            return false;
+          }
+        }  
+      </script>
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+      <span class="navbar-brand mb-0 h1"> >>> Organizer User >>> Role Page >>> Insert</span>
+    </nav>
+
+    <form action='/ou/role.do' method='POST' 
+    onsubmit ="return validateForm()" class="needs-validation" novalidate name = "formData">
+    {% csrf_token %}
+    <input type="hidden" name="$ACTION" id="$ACTION" value="insert">
+
+      <div class="mb-3 row">
+        <label  style="margin-left: 20px;" for="rolecode" class="col-sm-2 col-form-label">Role code: </label>
+        <div class="col-sm-10">
+          <input  style="margin-left: 20px;"  type="text" class="form-control" id="rolecode" name = "rolecode" placeholder="Enter the role code..." >
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label  style="margin-left: 20px;" for="name" class="col-sm-2 col-form-label">Role name: </label>
+        <div class="col-sm-10">
+          <input  style="margin-left: 20px;" type="text" class="form-control" id="rolename" name="rolename"  placeholder="Enter the role name...">
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label style="margin-left: 20px;"  for="age" class="col-sm-2 col-form-label">Description: </label>
+        <div class="col-sm-10">
+          <textarea  style="margin-left: 20px;" type="text" class="form-control" id="description" name = "description" placeholder="Enter the description..." rows="3"></textarea>
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label  style="margin-left: 20px;" for="seqnum" class="col-sm-2 col-form-label">Sequence number: </label>
+        <div class="col-sm-10">
+          <input  style="margin-left: 20px;" type="int" class="form-control" id="seqnum" name="seqnum"  placeholder="Enter the sequence number...">
+        </div>
+      </div>
+      <div class="form-group col-md-1">
+      <input  style="margin-left: 2px;" class = "btn btn-outline-dark" class = "form-control" type='submit' value='Save' />
+      </div>
+
+    </form>
+
+    <button  style="margin-left: 17px;" class = "btn btn-outline-dark" onclick="location.href = '/ou/role.do?$ACTION=list'">
+     Go Back
+    </button>
+  </body>
+</html>

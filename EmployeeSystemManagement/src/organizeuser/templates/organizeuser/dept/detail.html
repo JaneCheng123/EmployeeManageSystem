@@ -1,0 +1,26 @@
+<!Doctype>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     {% load static %}
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+</head>
+<body>
+	<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  		<span class="navbar-brand mb-0 h1"> >>> Department >>> Detail</span>
+	</nav>
+
+	<ul style="font-size:35px">
+		<li> Department Code: {{obj.deptcode}}</li>
+		<li> Path Code: {{obj.pathcode}}</li>
+		<li> Department Name: {{obj.deptname}}</li>
+		<li> Status: {{obj.deptstatus}}</li>
+		<li> Description: {{obj.description}}</li>
+	</ul>
+
+	<button class="btn btn-dark btn-sm" onclick="location.href = '/ou/dept.do?$ACTION=list&pathcode={{obj.pathcode}}'">
+		Go Back
+	</button>
+</body>
+</html>

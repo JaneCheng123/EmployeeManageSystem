@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+<!--      <link rel="stylesheet" href="{% static 'css/jquery.slim.min.js' %}"> -->
+
+
+<script type="text/javascript">
+function loadPage() {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET',"ou/account.do?$ACTION=getResource",true);
+  xhr.responseType = 'json';
+  xhr.onload = function(e) {
+      console.log('response', this.response);
+      var jsonMenu = this.response;
+
+      var tag = document.getElementById("allList");
+
+      for(var i = 0; i < jsonMenu.length; i++) {
+          var li = document.createElement("LI");
+          tag.appendChild(li);
+
+          var a = document.createElement("A");
+          a.setAttribute("href","#");
+          a.setAttribute("class" ,"dropdown-toggle");
+          a.innerText = jsonMenu[i].name;
+          a.onclick = dropDown;
+          li.appendChild(a);
+
+          var ul = document.createElement("ul");
+          ul.style.display = "none";
+          li.appendChild(ul);
+
+          for(var j = 0; j < jsonMenu[i].sub.length; j++) {
+              var subList = document.createElement("LI");
+              var subAnchor = document.createElement("A");
+              subAnchor.setAttribute("href", jsonMenu[i].sub[j].url);
+              subAnchor.setAttribute("target", "ifcontent");
+
+              var subText = document.createTextNode(jsonMenu[i].sub[j].name);
+              subAnchor.appendChild(subText);
+              subList.appendChild(subAnchor);
+              ul.appendChild(subList);
+          }
+      }
+  }
+  xhr.send();
+
+}
+
+function dropDown(event) {
+  var tag = event.target;
+
+  tag = tag.nextSibling;
+  var state = tag.style.display;
+  if (state && state=="none")
+    tag.style.display = "block";
+  else
+    tag.style.display = "none";
+}
+
+function home() {
+  var iframe = document.getElementById("ifcontent");
+  iframe.src = 'training/home';
+}
+
+</script>
+<style type="text/css">
+html {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+
+ .bodyframe {
+    display: flex;
+    flex-direction:row;
+    align-items:stretch;
+    justify-content:space-between;    
+    width: 100%;
+    height: 100%;
+ } 
+
+ .rightframe {
+  width: 100%;
+ }
+
+</style>
+
+
+
+<body onload="loadPage();">
+  
+<div class="bodyframe" id="divcontent">
+
+ 
+<nav id="sidebar">
+  
+   <div class="sidebar-header">
+    <h3 onclick="home()">Salary Web</h3>
+   </div>
+
+   {% if user != None %}
+    <p style="margin-left: 20px;" > Hello, {{user.1}}!</p>
+   {% endif%}
+
+   <ul class="lisst-unstyled components" name="allList" id="allList">
+
+
+
+   </ul>
+
+
+
+
+
+   <ul class="lisst-unstyled components" >
+
+  <li>
+       
+           {% if user != None %}
+              <a href="/logout">Log Out</a>
+          {% endif%}
+        </li>
+
+   </ul>
+    
+ </nav>
+
+
+
+<div class="rightframe">
+  <iframe src='training/home' width="100%" height="100%" id="ifcontent" name="ifcontent"></iframe>
+</div>
+</div>
+</body>
+
+
+</html>

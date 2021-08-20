@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+      <script type="text/javascript">
+        function validateId(key){
+          var ids = "{{ ids }}";
+          return ids.includes(key);
+        }
+
+        function validNames(n){
+          var names = {{ names|safe }};
+          return names.includes(n);
+        }
+
+        function validateForm() {
+          if (document.forms["formData"]["deptcode"].value == "") {
+            alert("Department Code must be filled out!");
+            return false;
+          }
+          else if (validateId(document.forms["formData"]["deptcode"].value)){
+            alert("The Department code you entered has already existed! Please enter another one.");
+            return false;
+          }
+          if (document.forms["formData"]["deptname"].value == "") {
+            alert("Name must be filled out!");
+            return false;
+          }
+          else if (validNames(document.forms["formData"]["deptname"].value)){
+            alert("The deptname you entered has already existed! Please enter another one.");
+            return false;
+          }
+          if (document.forms["formData"]["pathcode"].value == "") {
+            alert("Path code must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["deptstatus"].value == "") {
+            alert("Status must be filled out!");
+            return false;
+          }
+        }
+      </script>
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+      <span class="navbar-brand mb-0 h1"> >>> Department >>> Insert</span>
+    </nav>
+
+    <form action='/ou/dept.do?$ACTION=insert_view' method='POST' onsubmit ="return validateForm();" class="needs-validation" name = "formData">
+      {% csrf_token %}
+      <input type="hidden" id="pcode" name="pcode" value="{{pcode}}">
+        <div class="mb-3 row">
+          <label for="deptcode" style="margin-left: 1.5em;" class="col-sm-2 col-form-label">Department Code: </label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="deptcode" name="deptcode"  placeholder="Enter the code...">
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="deptname" style="margin-left: 1.5em;" class="col-sm-2 col-form-label">Department Name: </label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="deptname" name="deptname"  placeholder="Enter the name...">
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <label for="department" style="margin-left: 1.5em;" class="col-sm-2 col-form-label">deptstatus</label>
+          {% if deptstatus != 'I' %}
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input col-sm-7" id="deptstatus" name = "deptstatus" value="A" checked>
+              <label class="form-check-label" for="deptstatus">Active</label>
+            </div>
+          
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input col-sm-7" id="deptstatus" name = "deptstatus" value="I">
+              <label class="form-check-label" for="deptstatus">Inactive</label>
+            </div>
+          {% else %}
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input col-sm-7" id="deptstatus" name = "deptstatus" value="A">
+              <label class="form-check-label" for="deptstatus">Active</label>
+            </div>
+          
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input col-sm-7" id="deptstatus" name = "deptstatus" value="I" checked>
+              <label class="form-check-label" for="deptstatus">Inactive</label>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3 row">
+          <label for="description" style="margin-left: 1.5em;" class="col-sm-2 col-form-label">Description: </label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" id="description" name="description"  placeholder="Enter the description...">
+          </div>
+        </div>
+
+        <input style="float:left;" class = "btn btn-success" class = "form-control" type='submit' value='Save' /> &nbsp;&nbsp;&nbsp;
+        <button type="button" class = "btn btn-dark" onclick="location.href = '/ou/dept.do?$ACTION=list&pathcode={{pcode}}'">
+         Go Back
+        </button>
+    </form>
+  </body>
+</html>

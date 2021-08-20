@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+<script type="text/javascript">
+function ondelete(key,name) {
+  if (!confirm("Delete the account " + name + " ?")) {
+    return false;
+  }
+  location.href="/ou/account.do?$ACTION=delete&usercode=" + key;
+
+  return false;
+} 
+
+function searchForm(pagenum,t,q) {
+    var t_element = document.getElementById("t");
+    var q_element = document.getElementById("q");
+    t_element.value = t;
+    q_element.value = q;
+    var page = document.getElementById("page");
+    page.value = pagenum;
+    form.submit();
+    return false;
+}    
+
+function submitForm() {
+    var form = document.getElementById("formData");
+    form["$ACTION"] = "search";
+    form.submit();
+    return false;
+}
+
+function getDept() {
+  var iframe = document.getElementById("modalcontent");
+  var checkbox = iframe.contentWindow.document.getElementsByClassName("selected");
+  Array.prototype.forEach.call(checkbox,function(el) {
+      if(el.checked == true) {
+         console.log("checked");
+         console.log(el.value);
+      }
+  });
+
+}
+
+
+
+</script>
+
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+  <span class = "navbar-brand mb-0 h1"> >>> Organze User >>> Account Management
+</nav>
+
+
+<button  class = "btn btn-outline-success" onclick="location.href = '/ou/account.do?$ACTION=create'">
+ Create User
+</button>
+
+
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>usercode</th>
+        <th>username</th>
+        <th>email</th>
+        <th>deptcode</th>
+        <th>status</th>
+        <th>Manipulate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in page_obj %}
+        <tr>
+          <td>{{ obj.usercode }}</td>
+          <td>{{ obj.username }}</td>
+          <td>{{ obj.email }}</td>
+          <td>{{ obj.deptcode }}</td>
+          <td>{{ obj.userstatus}}</td>
+        <td>
+         <button  type = "button" class = "btn btn-info" name= "idd" value= 3 onclick="location.href = '/ou/account.do?$ACTION=detail&id={{obj.id}}'">
+          Card
+          </button>
+          <button  class = "btn btn-dark" onclick="return ondelete('{{obj.usercode}}','{{obj.username}}')">
+          Delete
+          </button>
+          <button  class = "btn btn-secondary" type = "button" onclick="location.href = '/ou/account.do?$ACTION=select&id={{obj.id}}'">
+          Edit
+          </button>
+          </td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  Launch static backdrop modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade modal-dialog-scrollable" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" >
+
+        <div class="box" >
+                <iframe src='account.do?$ACTION=usermodal' scrolling = "yes" width="350px" height="500px" id="modalcontent" name="modalcontent"align="right"></iframe>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick = "return getDept();" data-bs-dismiss="modal" >Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>
+</html>
+

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+<script type="text/javascript">
+
+function deleteRow(key,name) {
+    if (!confirm("Delete the employee " +name + " ?")) {
+      return false;
+    }
+
+    location.href="/training/sql.do?$ACTION=delete&employeeid=" + key;
+
+    return false;
+  } 
+
+function searchForm(page,t,q) {
+    alert("search form");
+    var form = document.getElementById("formData");
+    form["$ACTION"] = "search";
+    var page = document.getElementById("page");
+    page.value = page;
+    form.submit();
+    return false;
+}    
+
+function clear() {
+  var form = document.getElementById("formData");
+  alert('clear');
+  form.submit();
+  return false;
+}
+document.getElementById("searchButton").addEventListener("click",clear);
+</script>
+
+  </head>
+
+  <nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Training >>> Salary Page </span>
+</nav>
+
+<button  class = "btn btn-outline-dark" onclick="location.href = '/training/home'">
+ Go to homepage
+</button>
+<button  class = "btn btn-outline-success" onclick="location.href = '/training/sql.do?$ACTION=create'">
+ Create
+</button>
+<button  class = "btn btn-outline-warning"onclick="location.href = '/training/sql.do?$ACTION=importcsv'">
+ Import from csv
+</button>
+<select class = "btn btn-info" data-style="btn-success"style="float:right;" id = "order" name ="rr" method="get">
+    <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby=employeeid&page=1'"> List ordered by employeeid </option>
+    <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby=name&page=1'"> List ordered by name </option>
+    <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby=level&page=1'"> List ordered by level </option>
+    <option onclick="location.href = '/training/sql.do?$ACTION=list&orderby=total&page=1'"> List ordered by total </option>
+</select>
+
+
+<form action = "/training/sql.do" method="POST"> 
+   {% csrf_token %}
+    <input type="hidden" id="$ACTION" name="$ACTION" value="list">
+    <input type="hidden" name="page" id="page" value="1">
+  <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+  <div class="form-row">
+  <div class="col-auto">
+  <select class = "btn btn-danger" style="float:left;" id = "t"  name="t" >
+      <option > employeeid </option>
+    <option > name </option>
+    <option > department </option>
+    <option > level </option>
+</select>
+</div>
+<div class="form-group col-auto">
+  <input class="form-control"   style="float:left;"  type="text" id = "q" name="q" placeholder="Search..."> 
+  </div>
+    <div class="col-auto">
+  <input   class = "btn btn-secondary" id = "searchButton"   name = "searchButton" type='submit'
+  onclick="return clear();" value='Search' />
+</div>
+</div>
+</nav>
+
+
+
+
+
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Employeeid</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Department</th>
+        <th>Level</th>
+        <th>Total Salary</th>
+        <th>Manipulate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in page_obj %}
+        <tr>
+          <td>{{ obj.employeeid }}</td>
+          <td>{{ obj.name }}</td>
+          <td>{{ obj.age }}</td>
+          <td>{{ obj.department }}</td>
+          <td>{{ obj.level }}</td>
+          <td>{{ obj.total }}</td>
+        <td>
+         <button  type = "button" class = "btn btn-info" name= "idd" value= 3 onclick="location.href = '/training/sql.do?$ACTION=detail&employeeid={{obj.employeeid}}'">
+          Detail
+          </button>
+          <button  class = "btn btn-dark" id="deleteid" name="deleteid" value={{obj.employeeid}} onclick="return ondelete('{{obj.employeeid}}','{{obj.name}}')">
+          Delete
+          </button>
+          <button  class = "btn btn-secondary" onclick="location.href = '/training/sql.do?$ACTION=select&employeeid={{obj.employeeid}}'">
+          Edit
+          </button>
+          </td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  {% if t == None %}
+  <div  class = "text-center">
+  {% if page_obj.has_other_pages %}
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+     <button  class = "btn btn-success" type="button" onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ page_obj.previous_page_number }}'">Previous Page</button>
+      {% else %}
+        <button  class = "btn btn-success" disabled>Previous Page</button>
+      {% endif %}
+
+
+      <div class = "btn-group" role = "group" aria-label="Basic outlined example">
+      {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+          <button class = "btn btn-success" ><span>{{ i }} <span class="sr-only">(current)</span></span></button>
+        {% else %}
+          <button class = "btn btn-outline-success" type="button" onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ i }}'">{{ i }}</button>
+        {% endif %}
+      {% endfor %}
+     </div>
+
+
+      {% if page_obj.has_next %}
+        <button  class = "btn btn-success" type="button"  onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ page_obj.next_page_number }}'">Next Page</button>
+      {% else %}
+        <button  class = "btn btn-success" disabled>Next Page</button>
+      {% endif %}
+    </ul>
+  {% endif %}
+  </div>
+
+  {% else %}
+    <div  class = "text-center">
+  {% if page_obj.has_other_pages %}
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+     <button  class = "btn btn-success" onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ page_obj.previous_page_number }}'">Previous Page</button>
+      {% else %}
+        <button  class = "btn btn-success" disabled>Previous Page</button>
+      {% endif %}
+
+
+      <div class = "btn-group" role = "group" aria-label="Basic outlined example">
+      {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+          <button class = "btn btn-success" class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></button>
+        {% else %}
+          <button class = "btn btn-outline-success" onclick="location.href = '/training/sql.do?$ACTION=list&orderby={{order}}&page={{ i }}'">{{ i }}</button>
+        {% endif %}
+      {% endfor %}
+     </div>
+
+
+      {% if page_obj.has_next %}
+        <button  class = "btn btn-success"  onclick="return searchForm({{ page_obj.next_page_number }},{{t}},{{q}});">Next Page</button>
+      {% else %}
+        <button  class = "btn btn-success" disabled>Next Page</button>
+      {% endif %}
+    </ul>
+  {% endif %}
+  </div>
+  {% endif %}
+ 
+
+
+
+</form> 
+
+
+
+
+
+
+
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+</html>
+

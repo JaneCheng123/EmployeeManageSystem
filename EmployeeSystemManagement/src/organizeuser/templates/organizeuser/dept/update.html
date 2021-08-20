@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {% load static %}
+   <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+    <script type="text/javascript">
+      function validateForm() {
+          if (document.forms["formData"]["deptname"].value == "") {
+            alert("Name must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["deptstatus"].value == "") {
+            alert("Status must be filled out!");
+            return false;
+          }
+      }
+    </script>
+</head>
+
+
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Department >>> Edit</span>
+</nav>
+<form action="/ou/dept.do" method="POST" id="formData" name="formData" onsubmit ="return validateForm()"> 
+    <input type="hidden" id="$ACTION" name="$ACTION" value="update">
+    <input type="hidden" name="deptcode" id="deptcode" value="{{uid}}">
+    <input type="hidden" name="pathcode" id="pathcode" value="{{path}}">
+    {% csrf_token %}
+
+
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand">Department Code:      {{uid}}</a>
+  </div>
+</nav>
+
+
+  <div class="mb-3 row">
+    <label for="age" style="margin-left: 1.5em;" class="col-sm-2 col-form-label">Department Name</label>
+    <div class="col-sm-8">
+      <input type="int" class="form-control" id="deptname" name = "deptname" value="{{name}}">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="department" style="margin-left: 1.5em;" class="col-sm-2 col-form-label">deptstatus</label>
+    {% if deptstatus == 'A' %}
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" id="deptstatus" name = "deptstatus" value="A" checked>
+        <label class="form-check-label col-sm-7" for="deptstatus">Active</label>
+      </div>
+    
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" id="deptstatus" name = "deptstatus" value="I">
+        <label class="form-check-label col-sm-7" for="deptstatus">Inactive</label>
+      </div>
+    {% else %}
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" id="deptstatus" name = "deptstatus" value="A">
+        <label class="form-check-label col-sm-7" for="deptstatus">Active</label>
+      </div>
+    
+      <div class="form-check form-check-inline">
+        <input type="radio" class="form-check-input" id="deptstatus" name = "deptstatus" value="I" checked>
+        <label class="form-check-label col-sm-7" for="deptstatus">Inactive</label>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="mb-3 row">
+    <label for="hiredate" style="margin-left: 1.5em;" class="col-sm-2 col-form-label">Description</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="description" name="description"  value={{description}}>
+    </div>
+  </div>
+
+  <button style="float: left;" class = "btn btn-success" type="submit" value="update"  > Update </button> &nbsp;&nbsp;&nbsp;
+  <button type="button" class = "btn btn-dark" onclick="location.href = '/ou/dept.do?$ACTION=list&pathcode={{path}}'">
+   Go Back
+  </button>
+</form> 
+</html>

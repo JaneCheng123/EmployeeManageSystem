@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    </head>
+
+
+
+<script type="text/javascript">
+
+function validateId(key){
+          var ids = "{{ ids }}";
+          return ids.includes(key);
+        }
+
+function validateForm() {
+          let employeeid = document.forms["formData"]["employeeid"].value;
+          if (employeeid == "") {
+            alert("Employeeid must be filled out!");
+            return false;
+          }
+          else if (!(/^[1-9]\d\d\d\d$/.test(employeeid))){
+            alert("The employeeid you entered is not valid! It should be a five digit number.");
+            return false;
+          }
+          else if (validateId(employeeid)){
+             alert("The employeeid you entered has already existed! Please enter another one.");
+            return false;
+          }
+          if (document.forms["formData"]["name"].value == "") {
+            alert("Name must be filled out!");
+            return false;
+          }
+          let age = document.forms["formData"]["age"].value;
+          if (age == "") {
+            alert("Age must be filled out!");
+            return false;
+          }
+          else if (!(/^[1-6][0-9]$/.test(age))){
+            alert("The age you entered is not valid!");
+            return false;
+          }
+          else if (age < 20 || age > 59){
+            alert("Age you entered is not in the valid range (20-59)!");
+            return false;
+          }
+          if (document.forms["formData"]["department"].value == "") {
+            alert("Department must be chosen from the list!");
+            return false;
+          }
+          let hiredate = document.forms["formData"]["hiredate"].value;
+          if(!(hiredate.length==10 && hiredate.charAt(4) == '-' && hiredate.charAt(7) == '-')) {
+            alert("Hiredate should be of form YYYY-MM-DD!");
+            return false;
+          }
+          var date = new Date(hiredate)
+          if (isNaN(date.getTime())){
+            alert("Hiredate is not valid!");
+            return false;
+          }
+          var today = new Date()
+          if (date > today){
+            alert("Hiredate is after the current date!");
+            return false;
+          }
+          let salary = document.forms["formData"]["salary"].value
+          if (salary == "") {
+            alert("Salary must be filled out!");
+            return false;
+          }
+          else if (!(/^\d+$/.test(salary))){
+            alert("The salary you entered is not valid! It should be a positive integer.");
+            return false;
+          }
+          let level = document.forms["formData"]["level"].value
+          if (level == "") {
+            alert("Level must be filled out!!");
+            return false;
+          }
+          else if (eval(level) < 3 || eval(level)){
+            alert("The level you entered is not valid!");
+            return false;
+          }
+}   
+
+
+</script>
+
+<body>
+
+
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Training >>> Salary Page >>> Create</span>
+</nav>
+
+<form action='/training/sql.do?$ACTION=create_save' method='POST' 
+onsubmit ="return validateForm()" class="needs-validation" novalidate name = "formData">{% csrf_token %}
+<!-- {{ form.as_p }} -->
+
+
+
+
+
+  <div class="mb-3 row">
+    <label for="employeeid" style="margin-left: 20px;" class="col-sm-2 col-form-label">Employeeid</label>
+    <div class="col-sm-8">
+      <input type="int" class="form-control" id="employeeid" name = "employeeid" placeholder="Enter the employeeid..." >
+    </div>
+<!--     <div class = "valid-feedback"> nice id </div> -->
+  </div>
+
+  <div class="mb-3 row">
+    <label for="name" style="margin-left: 20px;" class="col-sm-2 col-form-label">Name</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="name" name="name"  placeholder="Enter the name...">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="age" style="margin-left: 20px;" class="col-sm-2 col-form-label">Age</label>
+    <div class="col-sm-8">
+      <input type="int" class="form-control" id="age" name = "age" placeholder="Enter the age...">
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="department" style="margin-left: 20px;" class="col-sm-2 col-form-label">Department</label>
+    <div class="col-sm-8">
+          <select class="form-select" aria-label="Default select example" name="department" data_style="btn-primary">
+            <option value = "" selected>Choose Department...</option>
+            <option value="Development">Development</option>
+            <option value="Ministry of Law">Ministry of Law</option>
+            <option value="Production">Production</option>
+            <option value="Purchasing">Purchasing</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Finance">Finance</option>
+            <option value="Testing">Testing</option>
+            <option value="Customer Service">Customer Service</option>
+            <option value="Human Resource">Human Resource</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+    </div>
+  </div>
+
+  <div class="mb-3 row">
+    <label for="hiredate" style="margin-left: 20px;" class="col-sm-2 col-form-label">Hiredate</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="hiredate" name="hiredate"  placeholder="Enter the hiredate in format yyyy-mm-dd...">
+    </div>
+  </div>
+
+    <div class="mb-3 row">
+    <label for="salary" style="margin-left: 20px;" class="col-sm-2 col-form-label">Salary</label>
+    <div class="col-sm-8">
+      <input type="int" class="form-control" id="salary" name="salary"  placeholder="Enter the salary...">
+    </div>
+  </div>
+
+    <div class="mb-3 row">
+    <label for="level" style="margin-left: 20px;" class="col-sm-2 col-form-label">Level</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" id="level" name="level"  placeholder="Enter the level...">
+    </div>
+  </div>
+
+
+
+<div class="form-group col-md-1">
+<input class = "form-control" type='submit' value='Save' />
+</div>
+
+</form>
+
+<button style="margin-left: 14px;" class = "btn btn-outline-dark" onclick="location.href = '/training/sql.do?$ACTION=list'">
+ Go to List Page
+</button>
+
+
+  </body>
+</html>
+

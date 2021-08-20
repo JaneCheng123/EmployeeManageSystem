@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	  {% load static %}
+	  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+	  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+
+	  <script type="text/javascript">
+		
+			function selectAll(key){
+				var resources = document.getElementsByName("selectedRole");
+				for (var i = 0; i < resources.length; i++){
+					if (resources[i].type == "checkbox"){
+						if (key == 'check'){
+							resources[i].checked = true;
+						}else{
+							resources[i].checked = false;
+						}
+					}
+				}
+			}
+		</script>
+	</head>
+	<body>
+
+		<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+      <span class="navbar-brand mb-0 h1"> >>> Organizer User >>> Edit Role Page</span>
+    </nav>
+
+		<h1 style="text-align: center;"> Role Summary <h1>
+			<button type="button" class = "btn btn-primary" onclick="location.href = '/ou/userrole.do?$ACTION=list'">
+				Go Back
+			</button>
+		<br>
+
+		<form action="/ou/userrole.do" method="POST" id="formData" name="formData">
+				{% csrf_token %}
+				<input type="hidden" name="$ACTION" id="$ACTION" value="update">
+				<input type="hidden" name="page" id="page" value="1">
+				<input type="hidden" name="usercode" id="usercode" value="{{ usercode }}">
+				<input type="hidden" name="update" id="update" value="update">
+			<font size="3">
+				<label style="font-size: 20px;">The usercode is: {{ usercode }}</label>
+			<table class="table table-bordered">
+				<tread>
+					<tr>
+						<th scope="col" width="20%"><b>Select Role for User</b></th>
+						<th scope="col" width="60%"><b>rolecode</b></th>
+					</tr>
+				</tread>
+				<tbody>
+					{% for obj in page_obj %}
+					<tr>
+						<th scope="row"><input type="checkbox" id="selectedRole" name="selectedRole" value="{{obj.rolecode}}" {% if obj.rolecode in selectedRole %} checked="checked" {% endif %}></th>
+						<th scope="row">{{ obj.rolecode }}</th>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			{% if page_obj.has_other_pages %}
+				<ul class="pagination">
+					{% if page_obj.has_previous %}
+						<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/userrole.do?$ACTION=update&page={{ page_obj.previous_page_number }}'">Previous</button>
+					{% else %}
+						<button type="button" class="btn btn-outline-dark" class="disabled">Previous</button>
+					{% endif %}
+
+					{% if page_obj.number|add:'-4' > 1 %}
+							<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/userrole.do?$ACTION=update&page={{ page_obj.number|add:'-5' }}'">&hellip;</button>
+					{% endif %}
+
+					{% for i in page_obj.paginator.page_range %}
+						{% if page_obj.number == i %}
+							<button type="button" class="btn btn-outline-info" class="disabled">{{ i }}</button>
+						{% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+							<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/userrole.do?$ACTION=update&page={{ i }}'">{{ i }}</button>
+						{% endif %}
+					{% endfor %}
+
+					{% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+							<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/userrole.do?$ACTION=update&page={{ page_obj.number|add:'5' }}'">&hellip;</button>
+					{% endif %}
+
+					{% if page_obj.has_next %}
+						<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/userrole.do?$ACTION=update&page={{ page_obj.next_page_number }}'">Next</button>
+					{% else %}
+						<button type="button" class="btn btn-outline-dark" class="disabled">Previous</button>
+					{% endif %}
+				</ul>
+			{% endif %}
+			</font>
+
+			<label style="font-size: 18px;color: red">Select checkbox means Y(Yes); unselect means N(No)</label>
+			<br>
+			<button type="button" class="btn btn-secondary" onclick="selectAll('check')">Select All</button>
+			<button type="button" class="btn btn-danger" onclick="selectAll('clear')">Clear</button>
+			<input class = "btn btn-success" type='submit' id="saveResource" value='Save Resources for role' formaction='/ou/userrole.do?$ACTION=update'/>
+		</form>
+	</body>
+</html>

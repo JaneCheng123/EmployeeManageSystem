@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	  {% load static %}
+	  <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+	  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+
+	  <script type="text/javascript">
+		
+			function ondelete(key) {
+				let prompt = "Are you sure you want to delete this resouce? (resource code: " + key + ")"
+				if (!confirm(prompt)) {
+					return false;
+				}
+				location.href="/ou/resource.do?$ACTION=delete&resourcecode=" + key;
+				return false;
+			}
+
+			function validateForm(){
+				if (document.forms["formData"]["t"].value == "") {
+            		alert("Category must be chosen from the list!");
+            		return false;
+          		}
+				if (document.forms["formData"]["q"].value == "" && document.forms["formData"]["t"].value != "resume"){
+					alert("Thing you want to search must be filled out!");
+            		return false;
+				}
+			}
+			function searchForm(key){
+				pageNum = key
+				t = document.getElementById("t")
+				q = document.getElementById("q")
+				page = document.getElementById("page")
+				page.value = pageNum
+				document.forms["formData"].submit()
+			}
+		</script>
+	</head>
+
+	<body>
+
+		<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+      <span class="navbar-brand mb-0 h1"> >>> Organizer User >>> Resource Page</span>
+    </nav>
+
+		<h1 style="text-align: center;"> Resource Summary <h1>
+		<button type="button" class = "btn btn-primary" onclick="location.href = '/ou/userrole.do?$ACTION=home'">
+			Go Back
+		</button>
+		<button type="button" class = "btn btn-primary" onclick="location.href = '/ou/resource.do?$ACTION=import'">
+			Import Data
+		</button>
+		<button type="button" class = "btn btn-primary" onclick="location.href = '/ou/resource.do?$ACTION=insert'">
+			Insert a new Resource
+		</button>
+
+		<label style="color: black;font-size: 15px;">Show Resources order by: </label>
+		<select class = "btn btn-outline-info" onchange="this.form.submit()">
+			{% for cate in col %}
+				{% if cate == category %}
+					<option onclick="location.href = '/ou/resource.do?$ACTION=list&orderby={{ cate }}&page=1'"selected>{{ cate }}</option>
+				{% else %}
+					<option onclick="location.href = '/ou/resource.do?$ACTION=list&orderby={{ cate }}&page=1'">{{ cate }}</option>
+				{% endif %}
+			{% endfor %}
+		</select>
+		<br>
+
+		<form action="/ou/resource.do" method="POST" id="formData" name="formData" onsubmit="return validateForm();">
+				{% csrf_token %}
+				<input type="hidden" name="$ACTION" id="$ACTION" value="list">
+				<input type="hidden" name="page" id="page" value="1">
+				<div class="form-row align-items-center">
+					<div class="col-auto">
+						<label style="font-size: 15px;">Search Resources by category: </label>
+						<select class = "btn btn-outline-info" name="t">
+							{% if t is None %}
+								<option value = "" selected>Choose Category...</option>
+								{% for cate in col %}
+									<option value="{{ cate }}">{{ cate }}</option>
+								{% endfor %}
+							{% else %}
+								<option value = "{{ t }}" selected>{{ t }}</option>
+								{% for cate in col %}
+									{% if cate != t %}
+										<option value="{{ cate }}">{{ cate }}</option>
+									{% endif %}
+								{% endfor %}
+								<option value = "resume">resume</option>
+							{% endif%}
+						</select>
+					</div>
+					<div class="col-auto">
+						<input class = "form-control" type="text" name="q" value="{{ q }}" placeholder="Search...">
+					</div>
+					<div class="col-auto">
+						<input class = "btn btn-secondary" type='submit' value='Submit'>
+					</div>
+			</div>
+			<font size="3">
+			<table class="table table-bordered">
+				<tread>
+					<tr>
+						{% for cate in col %}
+						<th scope="col"><b>{{ cate }}</b></th>
+						{% endfor %}
+						<th scope="col"><b>Modification</b></th>
+					</tr>
+				</tread>
+				<tbody>
+					{% for obj in page_obj %}
+					<tr>
+						<th scope="row">{{ obj.resourcecode }}</th>
+						<th scope="row">{{ obj.resourcename }}</th>
+						<th scope="row">{{ obj.sysname }}</th>
+						<th scope="row">{{ obj.modelname }}</th>
+						<th scope="row">{{ obj.actionname }}</th>
+						<th scope="row">{{ obj.accesstype }}</th>
+						<th scope="row"><button type="button" class = "btn btn-link" onclick="location.href = '/ou/resource.do?$ACTION=update&resourcecode={{ obj.resourcecode }}'">
+							Edit
+						</button><button type="button" class = "btn btn-link" onclick="return ondelete('{{ obj.resourcecode }}');">Delete</button></th>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+
+			{% if t is None %}
+				{% if page_obj.has_other_pages %}
+					<ul class="pagination">
+						{% if page_obj.has_previous %}
+							<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/resource.do?$ACTION=list&orderby={{ category }}&page={{ page_obj.previous_page_number }}'">Previous</button>
+						{% else %}
+							<button type="button" class="btn btn-outline-dark" class="disabled">Previous</button>
+						{% endif %}
+
+						{% if page_obj.number|add:'-4' > 1 %}
+								<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/resource.do?$ACTION=list&orderby={{ category }}&page={{ page_obj.number|add:'-5' }}'">&hellip;</button>
+						{% endif %}
+
+						{% for i in page_obj.paginator.page_range %}
+							{% if page_obj.number == i %}
+								<button type="button" class="btn btn-outline-info" class="disabled">{{ i }}</button>
+							{% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+								<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/resource.do?$ACTION=list&orderby={{ category }}&page={{ i }}'">{{ i }}</button>
+							{% endif %}
+						{% endfor %}
+
+						{% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+								<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/resource.do?$ACTION=list&orderby={{ category }}&page={{ page_obj.number|add:'5' }}'">&hellip;</button>
+						{% endif %}
+
+						{% if page_obj.has_next %}
+							<button type="button" class="btn btn-outline-dark" onclick="location.href = '/ou/resource.do?$ACTION=list&orderby={{ category }}&page={{ page_obj.next_page_number }}'">Next</button>
+						{% else %}
+							<button type="button" class="btn btn-outline-dark" class="disabled">Previous</button>
+						{% endif %}
+					</ul>
+				{% endif %}
+
+			{% else %}
+				{% if page_obj.has_other_pages %}
+					<ul class="pagination">
+						{% if page_obj.has_previous %}
+							<button type="button" class="btn btn-outline-dark" onclick="return searchForm('{{ page_obj.previous_page_number }}')">Previous</button>
+						{% else %}
+							<button type="button" class="btn btn-outline-dark" class="disabled">Previous</button>
+						{% endif %}
+
+						{% if page_obj.number|add:'-4' > 1 %}
+								<button type="button" class="btn btn-outline-dark" onclick="return searchForm('{{ page_obj.number|add:'-5' }}')">&hellip;</button>
+						{% endif %}
+
+						{% for i in page_obj.paginator.page_range %}
+							{% if page_obj.number == i %}
+								<button type="button" class="btn btn-outline-info" class="disabled">{{ i }}</button>
+							{% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+							<button type="button" class="btn btn-outline-dark" onclick="return searchForm('{{ i }}')">{{ i }}</button>
+							{% endif %}
+						{% endfor %}
+
+						{% if page_obj.paginator.num_pages > page_obj.number|add:'4' %}
+								<button type="button" class="btn btn-outline-dark" onclick="return searchForm('{{ page_obj.number|add:'5' }}')">&hellip;</button>
+						{% endif %}
+
+						{% if page_obj.has_next %}
+							<button type="button" class="btn btn-outline-dark" onclick="return searchForm('{{ page_obj.next_page_number }}')">Next</button>
+						{% else %}
+							<button type="button" class="btn btn-outline-dark" class="disabled">Previous</button>
+						{% endif %}
+					</ul>
+				{% endif %}
+			{% endif %}
+
+			</font>
+		</form>
+
+	</body>
+</html>

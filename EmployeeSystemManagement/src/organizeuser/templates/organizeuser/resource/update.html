@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+		<script type="text/javascript">
+      function validateId(key){
+          var resourcecodes = {{ resourcecodes|safe }};
+          return resourcecodes.includes(key);
+        }
+
+        function validateForm() {
+          let resourcecode = document.forms["formData"]["newresourcecode"].value;
+          if (resourcecode == "") {
+            alert("Resource code must be filled out!");
+            return false;
+          }
+          if (validateId(resourcecode)){
+            alert("The resource code you entered has already existed! Please enter another one.");
+            return false;
+          }
+          var whiteSpace = new RegExp("\\s+");
+          if (whiteSpace.test(resourcecode)){
+            alert("The resource code you entered was invalid! It should not contain any space. Please enter another one.");
+            return false;
+          }
+          if (document.forms["formData"]["resourcename"].value == "") {
+            alert("Resource name must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["sysname"].value == "") {
+            alert("System name must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["modelname"].value == "") {
+            alert("Model name must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["actionname"].value == "") {
+            alert("Action name must be filled out!");
+            return false;
+          }
+          if (document.forms["formData"]["accesstype"].value == "") {
+            alert("Access type must be selected!");
+            return false;
+          }
+        }  
+		</script>
+	</head>
+
+	<body>
+		<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+		  <span class="navbar-brand mb-0 h1"> >>> Organizer User >>> Resource Page >>> Edit</span>
+		</nav>
+		<form action="/ou/resource.do" method="POST" id="formData" name="formData" onsubmit ="return validateForm();"> 
+		    <input type="hidden" id="$ACTION" name="$ACTION" value="update">
+		    <input type="hidden" name="resourcecode" id="resourcecode" value="{{resourcecode}}">
+		    {% csrf_token %}
+		  <div class="mb-3 row">
+		    <label for="age" class="col-sm-2 col-form-label" style="margin-left: 20px;">Resource Code: </label>
+		    <div class="col-sm-10">
+		      <input style="margin-left: 20px;" type="text" class="form-control" id="newresourcecode" name = "newresourcecode" value="{{resourcecode}}">
+		    </div>
+		  </div>
+		  <div class="mb-3 row">
+        <label for="resourcename" class="col-sm-2 col-form-label" style="margin-left: 20px;">Resource name: </label>
+        <div class="col-sm-10">
+          <input style="margin-left: 20px;" type="text" class="form-control" id="resourcename" name="resourcename" value="{{resourcename}}">
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label for="sysname" class="col-sm-2 col-form-label" style="margin-left: 20px;">System name: </label>
+        <div class="col-sm-10">
+          <input style="margin-left: 20px;"  type="text" class="form-control" id="sysname" name="sysname"  value="{{sysname}}">
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="modelname" class="col-sm-2 col-form-label" style="margin-left: 20px;">Model name: </label>
+        <div class="col-sm-10">
+          <input style="margin-left: 20px;" type="text" class="form-control" id="modelname" name="modelname" value="{{modelname}}">
+        </div>
+      </div>
+      <div class="mb-3 row">
+        <label for="actionname" class="col-sm-2 col-form-label" style="margin-left: 20px;">Action name: </label>
+        <div class="col-sm-10">
+          <input style="margin-left: 20px;" type="text" class="form-control" id="actionname" name="actionname" value="{{actionname}}">
+        </div>
+      </div>
+
+      <div class="mb-3 row">
+        <label for="accesstype" class="col-sm-2 col-form-label" style="margin-left: 20px;">Access type: </label>
+        <div class="col-sm-10" style="margin-left: 20px;">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="accesstype" id="accesstype"
+             value="L"  {% if accesstype == L %} checked="checked" {% endif %}>
+            <label class="form-check-label" for="L">L(login)</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="accesstype" id="accesstype" value="A"  {% if accesstype == A %} checked="checked" {% endif %}>
+            <label class="form-check-label" for="A">A(anonymous)</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="accesstype" id="accesstype" value="R"  {% if accesstype == R %} checked="checked" {% endif %}>
+            <label class="form-check-label" for="R">R(role)</label>
+          </div>
+        </div>
+      </div>
+		<button class = "btn btn-outline-success" type="submit" value="save" style="margin-left: 20px;"> Save </button>
+    </form> 
+
+		<button  class = "btn btn-outline-dark" onclick="location.href = '/ou/resource.do?$ACTION=list'" style="margin-left: 20px;">
+		 Go Back
+		</button>
+	</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+
+<script type="text/javascript">
+function loadPage() {
+
+  var xhr2 = new XMLHttpRequest();
+  xhr2.open('GET',"sql.do?$ACTION=get_home_resource");
+  xhr2.responseType = 'json';
+  xhr2.onload = function(e) {
+      console.log('response', this.response);
+      var jsonMenu = this.response;
+      if(jsonMenu["training/home/sqlbutton"] == "N") {
+        var element = document.getElementById("training/home/sqlbutton");
+        element.remove()
+      }
+      if(jsonMenu["training/home/statbutton"] == "N") {
+        var element2 = document.getElementById("training/home/statbutton");
+        element2.remove()
+      }
+      if(jsonMenu["training/home/oubutton"] == "N") {
+        var element3 = document.getElementById("training/home/oubutton");
+        element3.remove()
+      }
+  }
+  xhr2.send();
+
+}
+
+</script>
+<body onload="loadPage();">
+<div class = "text-center">
+<h1> Employee Salary Manage System</h1>
+<h1>{{user.1}}</h1>
+<div class = "btn-group btn-group-xl" role = "group" aria-label="Basic outlined example">
+<button class = "btn btn-info" onclick="location.href = '/training/sql.do?$ACTION=list'" id = "training/home/sqlbutton" name = "training/home/sqlbutton">
+ Go To Salary Page
+</button>
+<button class = "btn btn-info"onclick="location.href = '/training/stat.do?$ACTION=list'" id ="training/home/statbutton" name ="training/home/statbutton">
+ Go To Stat Page
+</button>
+</div>
+<div class = "btn-group btn-group-xl" role = "group" aria-label="Basic outlined example">
+<button class = "btn btn-info" onclick="location.href = '/ou/list'" id = "training/home/oubutton" name = "training/home/oubutton">
+ Go To Organize User Page
+</button>
+<button class = "btn btn-info" onclick= "location.href = '/ou/setup'">
+ Set Up System
+</button>
+</div>
+</div>
+
+
+
+
+  </body>
+</html>
+

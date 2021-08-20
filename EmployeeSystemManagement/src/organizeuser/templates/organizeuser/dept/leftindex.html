@@ -1,0 +1,115 @@
+<!Doctype>
+<html>
+<head>
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'css/deptnavbar.css' %}">
+	<meta charset="utf-8">
+</head>
+<style type="text/css">
+html {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+
+ .bodyframe {
+    display: flex;
+    flex-direction:row;
+    align-items:stretch;
+    justify-content:space-between;    
+    width: 100%;
+    height: 100%;
+ } 
+
+ .rightframe {
+  width: 100%;
+ }
+
+</style>
+
+<script type="text/javascript">
+  function makeTree(node){
+    var subs = document.createElement("ul");
+
+    for (var i=0; i<node["sub"].length; i++){
+      var inner = document.createElement("li");
+      var inners = document.createElement("a");
+      child = node["sub"][i];
+      inners.innerHTML = child['name'];
+      inners.setAttribute("onclick","refreshlists("+"'"+child['path']+"'"+")");
+
+      inner.appendChild(inners);
+      subs.appendChild(inner);
+
+      if (child["sub"].length > 0){
+        inners.className = "dropdown-toggle";
+        inners.ondblclick = show_hide;
+        s = makeTree(child);
+        inner.appendChild(s);
+      }
+    }
+    return subs;
+  }
+
+
+  function loadPage(node) {
+    var jsonMenu = [{"code":"d","name":"Default",'path':"default"}];
+
+    for (var m in jsonMenu){
+      if (jsonMenu.hasOwnProperty(m)){
+        var outer = document.createElement("li");
+        outer.id = jsonMenu[m].code;
+
+        var main = document.createElement("a");
+        main.innerHTML = jsonMenu[m].name;
+        main.className = "dropdown-toggle";
+        main.ondblclick = show_hide;
+        main.setAttribute("onclick","refreshlists("+"'"+jsonMenu[m].path+"'"+")");
+
+        outer.appendChild(main);
+
+        subs = makeTree(node);
+        outer.appendChild(subs);
+        document.getElementById("components").appendChild(outer);
+      }
+    }
+  }
+
+  function show_hide(event){
+    var tag = event.target;
+
+    tag = tag.nextSibling;
+
+    if (tag.style.display == "none" && tag.style.display){
+      tag.style.display = ""
+    }
+    else{
+      tag.style.display = "none"
+    }
+  }
+
+  function refreshlists(f){
+    window.parent.refreshlist("/ou/dept.do?$ACTION=list&pathcode="+f); 
+  }
+
+</script>
+<body onload="loadPage({{sub|safe}});">
+	<div class="bodyframe" id="divcontent">
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <h4>Department</h4>
+      </div>
+
+      <ul id="components" class="lisst-unstyled components">
+     </ul>
+    </nav>
+	</div>
+</body>
+</html>

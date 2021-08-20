@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    </head>
+
+<body>
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Training >>> Salary Page >> Import </span>
+</nav>
+{% if WhetherSuccess == True %}
+    <p> Import CSV file successfully! </p>
+    {% else %}
+    <p> Failed to import CSV file! </p>
+
+{% endif %}
+
+<button  style="margin-left: 14px;" class="btn-success" onclick="location.href = '/training/sql.do?$ACTION=list'">
+          Go Back
+</button>
+
+  </body>
+</html>
+
+

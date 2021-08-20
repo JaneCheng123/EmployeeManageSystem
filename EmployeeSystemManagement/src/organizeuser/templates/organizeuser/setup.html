@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <script type="text/javascript">
+      function home() {
+          var iframe = window.parent.document.getElementById("ifcontent");
+          iframe.src = 'training/home';
+      }
+    </script>
+    </head>
+
+<body>
+<nav class="navbar navbar-light" style="background-color: #e3f2fd;"> 
+  <span class="navbar-brand mb-0 h1"> >>> Training >>> Set Up </span>
+</nav>
+{% if whetherSuccess == True %}
+    <p> Set up successfully! </p>
+    {% else %}
+    <p> Failed to set up! </p>
+
+{% endif %}
+
+<button  style="margin-left: 14px;" class="btn-success" onclick="home()">
+          Go Back
+</button>
+
+  </body>
+</html>
+
+
